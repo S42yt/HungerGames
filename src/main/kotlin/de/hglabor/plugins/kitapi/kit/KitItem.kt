@@ -1,6 +1,6 @@
 package de.hglabor.plugins.kitapi.kit
 
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -36,6 +36,6 @@ val ItemStack?.isKitItem: Boolean
         if (this == null) return false
         if (type == Material.AIR) return false
         if (itemMeta == null) return false
-        if (itemMeta.lore == null || itemMeta.lore.isEmpty()) return false
-        return itemMeta.lore.first() == "${ChatColor.DARK_PURPLE}Kititem"
+        if (itemMeta.lore == null || itemMeta.lore?.isEmpty() == true) return false
+        return itemMeta.lore?.first() == "${Color.PURPLE}Kititem"
     }

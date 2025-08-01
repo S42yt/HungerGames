@@ -13,10 +13,11 @@ import de.hglabor.plugins.hungergames.scoreboard.setScoreboard
 import de.hglabor.plugins.kitapi.implementation.None
 import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.extensions.bukkit.feedSaturate
-import net.axay.kspigot.extensions.bukkit.heal
 import net.axay.kspigot.extensions.geometry.add
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
@@ -47,7 +48,7 @@ open class HGPlayer(val uuid: UUID, val name: String) {
     var isKitByRogueDisabled: Boolean = false
     var wasInArena: Boolean = false
     val kitPrefix: String
-        get() = if(!kit.properties.isEnabled || isKitByRogueDisabled) "${ChatColor.STRIKETHROUGH}" else ""
+        get() = if(!kit.properties.isEnabled || isKitByRogueDisabled) "${TextDecoration.STRIKETHROUGH}" else ""
 
     fun login() {
         OfflineTimer.stopTimer(this)
@@ -62,15 +63,15 @@ open class HGPlayer(val uuid: UUID, val name: String) {
         }
 
         board = player.setScoreboard {
-            title = "${ChatColor.AQUA}${ChatColor.BOLD}HG${ChatColor.WHITE}${ChatColor.BOLD}Labor.de"
+            this.title = LegacyComponentSerializer.legacySection().deserialize("&b&lHG&f&lLabor.de")
             period = 20
             content {
                 +" "
-                +{ "${ChatColor.GREEN}${ChatColor.BOLD}Players:#${ChatColor.WHITE}${PlayerList.getShownPlayerCount()} ${ChatColor.GRAY}(${Arena.queuedPlayers.size + (Arena.currentMatch?.players?.size ?: 0)})" }
-                +{ "${ChatColor.AQUA}${ChatColor.BOLD}Kit:#${ChatColor.WHITE}${kitPrefix}${kit.properties.kitname}" }
-                +{ "${ChatColor.RED}${ChatColor.BOLD}Kills:#${ChatColor.WHITE}${kills.get()}" }
-                +{ "${ChatColor.YELLOW}${ChatColor.BOLD}${GameManager.phase.timeName}:#${ChatColor.WHITE}${GameManager.phase.getTimeString()}" }
-                +{ if (isInCombat) "${ChatColor.RED}${ChatColor.BOLD}IN COMBAT" else " " }
+                +{ "&a&lPlayers: &f${PlayerList.getShownPlayerCount()} &7(${Arena.queuedPlayers.size + (Arena.currentMatch?.players?.size ?: 0)})" }
+                +{ "&b&lKit: &f${kitPrefix}${kit.properties.kitname}" }
+                +{ "&c&lKills: &f${kills.get()}" }
+                +{ "&e&l${GameManager.phase.timeName}: &f${GameManager.phase.getTimeString()}" }
+                +{ if (isInCombat) "&c&lIN COMBAT" else " " }
             }
         }
     }
@@ -82,9 +83,15 @@ open class HGPlayer(val uuid: UUID, val name: String) {
             inventory.addItem(ItemStack(Material.COMPASS))
             gameMode = GameMode.SURVIVAL
             closeInventory()
-            maxHealth = 20.0
+            val maxHealthAttribute = getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)
+            maxHealthAttribute?.baseValue = 20.0
+            health = maxHealthAttribute?.value ?: 20.0
             feedSaturate()
-            heal()
+
+            getAttribute(org.bukkit.attribute.Attribute.GENERIC_ATTACK_SPEED)?.baseValue = 1024.0
+
+            inventory.setItemInOffHand(null)
+
             if (kit == None && GameManager.phase == InvincibilityPhase) {
                 if (!RandomKits.internal.isEnabled) {
                     inventory.addItem(KitSelector.kitSelectorItem)
@@ -93,16 +100,25 @@ open class HGPlayer(val uuid: UUID, val name: String) {
                 kit.internal.givePlayer(this)
             }
             hgPlayer.combatTimer.set(0)
-            teleport(getSpawnLocation().add(0, 3 ,0))
+            teleport(getSpawnLocation().add(0.0, 3.0 ,0.0))
         }
     }
 
     private fun getSpawnLocation(): Location {
-        val spawnLoc = GameManager.world.spawnLocation
-        val newLoc = spawnLoc.clone().add((-25..25).random(), 0, (-25..25).random())
-        val highestBlock = newLoc.world.getHighestBlockAt(newLoc)
-        return if (highestBlock.y > 85 || (!highestBlock.type.isSolid && !highestBlock.getRelative(BlockFace.DOWN).type.isSolid)) getSpawnLocation()
-        else highestBlock.location
+        val spawnLoc = GameManager.world?.spawnLocation ?: throw IllegalStateException("World or spawn is null")
+        val maxTries = 20
+        repeat(maxTries) {
+            val newLoc = spawnLoc.clone().add((-25..25).random().toDouble(), 0.0, (-25..25).random().toDouble())
+            val world = newLoc.world ?: return@repeat
+            val highestBlock = world.getHighestBlockAt(newLoc)
+            if (highestBlock.y > 85) return@repeat
+            val block = highestBlock
+            val blockBelow = block.getRelative(BlockFace.DOWN)
+            if (block.type.isSolid && blockBelow.type.isSolid) {
+                return block.location
+            }
+        }
+        return spawnLoc
     }
 
     fun enableKit() {

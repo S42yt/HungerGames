@@ -1,0 +1,20 @@
+[versions]
+kotlin = "1.9.22"
+kotlinx-coroutines = "1.7.3"
+kotlinx-serialization = "1.6.2"
+paper = "1.21.1-R0.1-SNAPSHOT"
+shadow = "8.3.3"
+kmongo = "4.11.0"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
+kmongo-serialization = { module = "org.litote.kmongo:kmongo-serialization-mapping", version.ref = "kmongo" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

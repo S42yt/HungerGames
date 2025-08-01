@@ -1,7 +1,7 @@
 package de.hglabor.plugins.hungergames.player
 
 import de.hglabor.plugins.hungergames.staff.StaffMode
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.GameMode
 import java.util.*
 
@@ -13,12 +13,12 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
 
     fun toggleStaffMode() {
         if (isStaffMode) {
-            bukkitPlayer?.sendMessage("${StaffMode.prefix}${ChatColor.LIGHT_PURPLE}Staffmode ${ChatColor.DARK_GRAY}» ${ChatColor.GREEN}Restored staff inventory")
+            bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Staffmode ${Color.GRAY}» ${Color.GREEN}Restored staff inventory")
             StaffMode.setStaffInventory(this)
             return
         }
         isStaffMode = !isStaffMode
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${ChatColor.LIGHT_PURPLE}Staffmode ${ChatColor.DARK_GRAY}» ${isStaffMode.text}")
+        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Staffmode ${Color.GRAY}» ${isStaffMode.text}")
         status = PlayerStatus.SPECTATOR
         bukkitPlayer?.gameMode = GameMode.CREATIVE
         StaffMode.setStaffInventory(this)
@@ -28,17 +28,17 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
 
     fun toggleBuildMode() {
         isBuildMode = !isBuildMode
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${ChatColor.LIGHT_PURPLE}Buildmode ${ChatColor.DARK_GRAY}» ${isBuildMode.text}")
+        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Buildmode ${Color.GRAY}» ${isBuildMode.text}")
     }
 
     fun toggleCollectingItems() {
         canCollectItems = !canCollectItems
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${ChatColor.LIGHT_PURPLE}Collecting Items ${ChatColor.DARK_GRAY}» ${canCollectItems.text}")
+        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Collecting Items ${Color.GRAY}» ${canCollectItems.text}")
     }
 
     fun toggleVisibility() {
         isVisible = !isVisible
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${ChatColor.LIGHT_PURPLE}Visibility ${ChatColor.DARK_GRAY}» ${isVisible.text}")
+        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Visibility ${Color.GRAY}» ${isVisible.text}")
 
         if (isVisible) StaffMode.show(this)
         else StaffMode.hide(this)
@@ -46,5 +46,5 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
     }
 
 
-    val Boolean.text get() = if (this) "${ChatColor.GREEN}Enabled" else "${ChatColor.RED}Disabled"
+    val Boolean.text get() = if (this) "${Color.GREEN}Enabled" else "${Color.RED}Disabled"
 }

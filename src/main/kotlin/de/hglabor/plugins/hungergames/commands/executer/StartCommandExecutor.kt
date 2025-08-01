@@ -1,15 +1,16 @@
-package de.hglabor.plugins.hungergames.commands
+package de.hglabor.plugins.hungergames.commands.executer
 
 import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.game.GameManager
 import de.hglabor.plugins.hungergames.game.phase.phases.PvPPhase
 import net.axay.kspigot.extensions.broadcast
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 
-object StartCommand: CommandExecutor {
+class StartCommandExecutor : CommandExecutor {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
@@ -17,16 +18,15 @@ object StartCommand: CommandExecutor {
         args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("hglabor.staff")) {
-            sender.sendMessage("${Prefix}${ChatColor.RED}You are not permitted to execute this command.")
+            sender.sendMessage("${Prefix}${Color.RED}You are not permitted to execute this command.")
             return false
         }
         if (GameManager.phase == PvPPhase) {
             sender.sendMessage("${Prefix}? x D")
             return false
         }
-        broadcast("${Prefix}${ChatColor.WHITE}${ChatColor.BOLD}The next game phase has been started!")
+        broadcast("${Prefix}${Color.WHITE}${TextDecoration.BOLD}The next game phase has been started!")
         GameManager.startNextPhase()
         return true
     }
-
 }

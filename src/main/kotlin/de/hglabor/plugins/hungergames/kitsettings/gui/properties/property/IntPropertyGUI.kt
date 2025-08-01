@@ -12,7 +12,8 @@ import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.items.setLore
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -25,9 +26,9 @@ object IntPropertyGUI {
     ) {
         val settings = property.settings as NumberPropertySettings
         player.openGUI(kSpigotGUI(GUIType.SIX_BY_NINE) {
-            title = "$Prefix${property.settings.propertyName}"
+            title = Component.text("$Prefix${property.settings.propertyName}")
             page(1) {
-                placeholder(Slots.All, itemStack(Material.STAINED_GLASS_PANE) { meta { name = null } })
+                placeholder(Slots.All, itemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE) { meta { name = null } })
 
                 placeholder(
                     Slots.RowFiveSlotFive,
@@ -84,20 +85,20 @@ object IntPropertyGUI {
                         val colorData =
                             if ((percentage == 0 && property.get() > 0) || (max / 100 * percentage <= property.get()))
                                 13 else 14
-                        ItemStack(Material.STAINED_GLASS_PANE, 1, colorData.toShort()).apply {
+                        ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1, colorData.toShort()).apply {
                             meta {
                                 name = null
                                 setLore {
-                                    +"${ChatColor.GRAY}Click to set value to ${ChatColor.WHITE}$percentage%"
-                                    +"${ChatColor.GRAY}which is equal to ${ChatColor.WHITE}${
+                                    +"${Color.GRAY}Click to set value to ${Color.WHITE}$percentage%"
+                                    +"${Color.GRAY}which is equal to ${Color.WHITE}${
                                         (max / 100 * percentage).coerceAtMost(
                                             max
                                         ).coerceAtLeast(min)
                                     }"
                                     +""
-                                    +"${ChatColor.DARK_GRAY}this might not be 100% correct"
-                                    +"${ChatColor.DARK_GRAY}if the min value is not 0"
-                                    +"${ChatColor.DARK_GRAY}but mathe geil"
+                                    +"${Color.GRAY}this might not be 100% correct"
+                                    +"${Color.GRAY}if the min value is not 0"
+                                    +"${Color.GRAY}but mathe geil"
                                 }
                             }
                         }
@@ -121,7 +122,7 @@ object IntPropertyGUI {
                     )
                 )
 
-                button(Slots.RowOneSlotNine, itemStack(Material.BARRIER) { meta { name = "${ChatColor.RED}Back" } }) {
+                button(Slots.RowOneSlotNine, itemStack(Material.BARRIER) { meta { name = Component.text("${Color.RED}Back") } }) {
                     it.bukkitEvent.isCancelled = true
                     KitPropertiesGUI.openKitProperties(player, kit)
                 }
@@ -144,9 +145,9 @@ object IntPropertyGUI {
         builder.apply {
             button(
                 slot,
-                ItemStack(Material.STAINED_GLASS_PANE, toIncrement, if (isNegative) 14 else 13).apply {
+                ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, toIncrement, if (isNegative) 14 else 13).apply {
                     meta {
-                        name = "${PrimaryColor}$toIncrement"
+                        name = Component.text("${PrimaryColor}$toIncrement")
                     }
                 }
             ) {

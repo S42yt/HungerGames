@@ -11,8 +11,11 @@ import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.runnables.task
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -22,16 +25,19 @@ class PhantomProperties : CooldownProperties(30) {
 
 val Phantom by Kit("Phantom", ::PhantomProperties) {
     displayMaterial = Material.FEATHER
-    description = "${ChatColor.WHITE}Right-click ${ChatColor.GRAY}your kit-item to fly for ${kit.properties.flightTime} seconds"
+    description = "${Color.WHITE}Right-click ${Color.GRAY}your kit-item to fly for ${kit.properties.flightTime} seconds"
 
-    clickableItem(itemStack(Material.FEATHER) { meta { name = "${SecondaryColor}Phantom" } }) {
+    clickableItem(ItemStack(Material.PHANTOM_MEMBRANE)) {
+        it.item?.meta {
+            name = Component.text("Phantom")
+        }
         applyCooldown(it) {
             it.player.apply {
                 allowFlight = true
                 isFlying = true
-                player.sendMessage("${Prefix}You are now able to fly.")
-                player.velocity = Vector(0.0, 0.3, 0.0)
-                broadcast("${ChatColor.BOLD}A ${SecondaryColor}${ChatColor.BOLD}Phantom ${ChatColor.WHITE}${ChatColor.BOLD}has risen!")
+                player?.sendMessage("${Prefix}You are now able to fly.")
+                player?.velocity = Vector(0.0, 0.3, 0.0)
+                broadcast("${TextDecoration.BOLD}A ${SecondaryColor}${TextDecoration.BOLD}Phantom ${Color.WHITE}${TextDecoration.BOLD}has risen!")
 
                 val timer = AtomicInteger(kit.properties.flightTime)
                 task(true, 20, 20) { task ->
@@ -41,10 +47,10 @@ val Phantom by Kit("Phantom", ::PhantomProperties) {
                         cancelFalldamage(100, true)
                         allowFlight = false
                         isFlying = false
-                        player.sendMessage("${Prefix}You are no longer able to fly.")
+                        player?.sendMessage("${Prefix}You are no longer able to fly.")
                         return@task
                     }
-                    player.sendMessage("${Prefix}Your flight has ${SecondaryColor}$timeRemaining ${ChatColor.GRAY}seconds remaining.")
+                    player?.sendMessage("${Prefix}Your flight has ${SecondaryColor}$timeRemaining ${Color.GRAY}seconds remaining.")
                 }
             }
         }

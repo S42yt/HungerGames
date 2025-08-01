@@ -8,11 +8,13 @@ import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.hungergames.scoreboard.setScoreboard
 import de.hglabor.plugins.hungergames.utils.TimeConverter
 import net.axay.kspigot.extensions.broadcast
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.Color
 import org.bukkit.entity.Player
 
 object Arena {
-    val Prefix = " ${ChatColor.DARK_GRAY}| ${ChatColor.RED}Arena ${ChatColor.DARK_GRAY}» ${ChatColor.GRAY}"
+    val Prefix = " &7| &cArena &7» &f"
     var isOpen = true
     val queuedPlayers = mutableListOf<HGPlayer>()
     var currentMatch: ArenaMatch? = null
@@ -26,7 +28,7 @@ object Arena {
         player.inventory.clear()
 
         player.setScoreboard {
-            title = "${ChatColor.AQUA}${ChatColor.BOLD}HG${ChatColor.WHITE}${ChatColor.BOLD}Labor.de"
+            this.title = LegacyComponentSerializer.legacySection().deserialize("&b&lHG&f&lLabor.de")
             period = 20
             content {
                 fun fightDuration(): String {
@@ -36,13 +38,13 @@ object Arena {
                     return TimeConverter.stringify(ArenaMatch.MAX_DURATION)
                 }
                 +" "
-                +{ "${ChatColor.GREEN}${ChatColor.BOLD}Players:#${ChatColor.WHITE}${PlayerList.getShownPlayerCount()}" }
-                +{ "${ChatColor.YELLOW}${ChatColor.BOLD}${GameManager.phase.timeName}:#${ChatColor.WHITE}${GameManager.phase.getTimeString()}" }
-                +"${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}          #${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}          "
-                +{ "${ChatColor.AQUA}${ChatColor.BOLD}Waiting:#${ChatColor.WHITE}${queuedPlayers.size}" }
-                +{ "${ChatColor.RED}${ChatColor.BOLD}Fighting:#${ChatColor.WHITE}${fightDuration()}" }
-                +{ "  ${ChatColor.GRAY}-#${(currentMatch?.players?.firstOrNull()?.name ?: "None").take(15)}" }
-                +{ "  ${ChatColor.GRAY}-#${(currentMatch?.players?.lastOrNull()?.name ?: "None").take(15)}" }
+                +{ "&a&lPlayers: &f${PlayerList.getShownPlayerCount()}" }
+                +{ "&e&l${GameManager.phase.timeName}: &f${GameManager.phase.getTimeString()}" }
+                +"&7&m          &7&m          "
+                +{ "&b&lWaiting: &f${queuedPlayers.size}" }
+                +{ "&c&lFighting: &f${fightDuration()}" }
+                +{ "  &7-&f${(currentMatch?.players?.firstOrNull()?.name ?: "None").take(15)}" }
+                +{ "  &7-&f${(currentMatch?.players?.lastOrNull()?.name ?: "None").take(15)}" }
                 +" "
             }
         }
@@ -61,6 +63,6 @@ object Arena {
 
     fun close() {
         isOpen = false
-        broadcast("$Prefix${ChatColor.RED}${ChatColor.BOLD}The Arena has been closed!")
+        broadcast("$Prefix${Color.RED}${TextDecoration.BOLD}The Arena has been closed!")
     }
 }

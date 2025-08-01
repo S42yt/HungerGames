@@ -3,7 +3,7 @@ package de.hglabor.plugins.kitapi.implementation
 import de.hglabor.plugins.hungergames.utils.ChanceUtils
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -21,8 +21,8 @@ class SnailProperties : KitProperties() {
 val Snail by Kit("Snail", ::SnailProperties) {
     displayMaterial = Material.SLIME_BALL
     description {
-        +"${ChatColor.WHITE}Hit ${ChatColor.GRAY}an enemy to give them ${ChatColor.WHITE}slowness"
-        +"${ChatColor.WHITE}While sneaking ${ChatColor.GRAY}you deal and take half a heart of damage"
+        +"${Color.WHITE}Hit ${Color.GRAY}an enemy to give them ${Color.WHITE}slowness"
+        +"${Color.WHITE}While sneaking ${Color.GRAY}you deal and take half a heart of damage"
     }
 
     kitPlayerEvent<EntityDamageByEntityEvent>({ it.damager as? Player }, priority = EventPriority.HIGH) { it, damager ->
@@ -35,7 +35,7 @@ val Snail by Kit("Snail", ::SnailProperties) {
 
         target.addPotionEffect(
             PotionEffect(
-                PotionEffectType.SLOW,
+                PotionEffectType.SLOWNESS,
                 this.kit.properties.slownessDuration * 20,
                 this.kit.properties.slownessAmplifier
             )

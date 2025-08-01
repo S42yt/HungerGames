@@ -13,7 +13,7 @@ import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import net.axay.kspigot.utils.OnlinePlayerMap
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -40,15 +40,15 @@ class SpongeProperties : MultipleUsesCooldownProperties(15, 30) {
 val Sponge by Kit("Sponge", ::SpongeProperties) {
     displayMaterial = Material.SPONGE
     description {
-        +"${ChatColor.WHITE}Place sponges ${ChatColor.GRAY}to launch players into the air"
-        +"${ChatColor.WHITE}Right-click ${ChatColor.GRAY}a block with a hand to water it"
+        +"${Color.WHITE}Place sponges ${Color.GRAY}to launch players into the air"
+        +"${Color.WHITE}Right-click ${Color.GRAY}a block with a hand to water it"
     }
 
     val waterBlocks = ArrayList<Block>()
     val waterTasks = OnlinePlayerMap<KSpigotRunnable?>()
 
     listen<BlockFromToEvent> {
-        if (it.block.type == Material.WATER || it.block.type == Material.STATIONARY_WATER) {
+        if (it.block.type == Material.WATER || it.block.type == Material.LEGACY_STATIONARY_WATER) {
             if (waterBlocks.contains(it.block)) {
                 it.isCancelled = true
             }
@@ -56,9 +56,9 @@ val Sponge by Kit("Sponge", ::SpongeProperties) {
     }
 
     fun Player.isInSpongeWater(): Boolean {
-        if (player.hasKit(kit)) return false
-        val feetBlock = player.location.block
-        val headBlock = player.location.block.getRelative(BlockFace.UP)
+        if (player?.hasKit(kit) != true) return false
+        val feetBlock = player?.location?.block
+        val headBlock = player?.location?.block?.getRelative(BlockFace.UP)
         if (feetBlock in waterBlocks) return true
         if (headBlock in waterBlocks) return true
         return false
@@ -109,14 +109,16 @@ val Sponge by Kit("Sponge", ::SpongeProperties) {
         if (it.player.itemInHand != null && it.player.itemInHand.type != Material.AIR) return@kitPlayerEvent
 
         applyCooldown(it) {
-            val blockToReplace = it.clickedBlock.getRelative(BlockFace.UP)
-            if (!blockToReplace.type.isSolid) {
-                blockToReplace.setType(Material.STATIONARY_WATER, false)
-                waterBlocks.add(blockToReplace)
+            val blockToReplace = it.clickedBlock?.getRelative(BlockFace.UP)
+            blockToReplace?.type?.isSolid?.let { it1 ->
+                if (!it1) {
+                    blockToReplace.setType(Material.LEGACY_STATIONARY_WATER, false)
+                    waterBlocks.add(blockToReplace)
 
-                taskRunLater(kit.properties.waterDuration * 20L) {
-                    blockToReplace.setType(Material.AIR, false)
-                    waterBlocks.remove(blockToReplace)
+                    taskRunLater(kit.properties.waterDuration * 20L) {
+                        blockToReplace.setType(Material.AIR, false)
+                        waterBlocks.remove(blockToReplace)
+                    }
                 }
             }
         }

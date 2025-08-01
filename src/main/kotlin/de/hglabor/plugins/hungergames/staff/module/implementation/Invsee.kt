@@ -6,8 +6,9 @@ import de.hglabor.plugins.hungergames.staff.module.command.IStaffCommand
 import de.hglabor.plugins.hungergames.staff.module.command.staffCommand
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemStack
 object Invsee: InteractWithPlayerModule(), IStaffCommand {
     override val item: ItemStack = staffItem(Material.CHEST) {
         meta {
-            name = "${ChatColor.RED}Player Inventory"
+            name = Component.text("Player Inventory")
         }
     }
 
@@ -29,7 +30,7 @@ object Invsee: InteractWithPlayerModule(), IStaffCommand {
         val target = Bukkit.getPlayer(targetName)
 
         if (target == null) {
-            sender.sendMessage("${StaffMode.prefix}${ChatColor.RED}This player is not online.")
+            sender.sendMessage("${StaffMode.prefix}${Color.RED}This player is not online.")
             return@staffCommand
         }
 

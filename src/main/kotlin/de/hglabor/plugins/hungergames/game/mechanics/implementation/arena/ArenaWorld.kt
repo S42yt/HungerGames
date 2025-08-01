@@ -14,13 +14,13 @@ import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 
 object ArenaWorld {
-    val world: World = Bukkit.getWorld("arena")
+    val world: World? = Bukkit.getWorld("arena")
     val queueLocation = Location(world, 247.5, 76.5, 281.5, 90f, 0F)
     val spawn1Location = Location(world, 221.5, 75.5, 261.5, 0f, 0F)
     val spawn2Location = Location(world, 221.5, 75.5, 301.5, -180f, 0F)
 
     init {
-        world.difficulty = Difficulty.NORMAL
+        world?.difficulty = Difficulty.NORMAL
 
         listen<BlockBreakEvent> {
             if (it.block.world != Bukkit.getWorld("arena")) return@listen
@@ -52,7 +52,6 @@ object ArenaWorld {
         }
 
         listen<FoodLevelChangeEvent> {
-            if (it.entity !is LivingEntity) return@listen
             if (it.entity.world == world) {
                 it.isCancelled = true
             }

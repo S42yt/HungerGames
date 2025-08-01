@@ -6,9 +6,10 @@ import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.extensions.geometry.add
 import net.axay.kspigot.runnables.taskRunLater
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Effect
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
@@ -21,7 +22,7 @@ class ReviveProperties : CooldownProperties(50)
 
 val Revive by Kit("Revive", ::ReviveProperties) {
     displayMaterial = Material.GOLDEN_APPLE
-    description = "${ChatColor.GRAY}Instead of dieing, you will receive ${ChatColor.WHITE}effects to keep you alive"
+    description = "${Color.GRAY}Instead of dieing, you will receive ${Color.WHITE}effects to keep you alive"
 
 
     kitPlayerEvent<EntityDamageEvent>({ it.entity as? Player }) { it, player ->
@@ -43,11 +44,11 @@ val Revive by Kit("Revive", ::ReviveProperties) {
                 val scaleY = 1
                 val density = 1.0
                 var i = 0.0
-                player.world.playSound(player.location, Sound.ANVIL_BREAK, 3f, 1f)
+                player.world.playSound(player.location, Sound.BLOCK_ANVIL_BREAK, 3f, 1f)
                 while (i < 2 * Math.PI) {
                     val x = cos(i) * scaleX
                     val y = sin(i) * scaleY
-                    player.world.playEffect(player.location.clone().add(x, 0, y), Effect.HAPPY_VILLAGER, 15)
+                    player.world.spawnParticle(Particle.HAPPY_VILLAGER, player.location.clone().add(x, 0, y), 15)
                     i += density
                 }
             }

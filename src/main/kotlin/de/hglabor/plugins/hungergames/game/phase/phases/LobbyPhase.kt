@@ -33,7 +33,7 @@ object LobbyPhase : GamePhase(150, InvincibilityPhase) {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         PlayerList.getPlayer(event.player)
         event.player.apply {
-            teleport(GameManager.world.spawnLocation)
+            GameManager.world?.spawnLocation?.let { teleport(it) }
             gameMode = GameMode.SURVIVAL
             inventory.clear()
             if (!RandomKits.internal.isEnabled) {

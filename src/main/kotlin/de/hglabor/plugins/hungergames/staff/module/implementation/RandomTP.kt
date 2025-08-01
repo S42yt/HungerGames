@@ -8,16 +8,17 @@ import de.hglabor.plugins.hungergames.staff.module.command.IStaffCommand
 import de.hglabor.plugins.hungergames.staff.module.command.staffCommand
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
 object RandomTP : InteractModule(), IStaffCommand {
-    override val item: ItemStack = staffItem(Material.SKULL_ITEM) {
+    override val item: ItemStack = staffItem(Material.PLAYER_HEAD) {
         meta {
-            name = "${ChatColor.RED}Random Teleport"
+            name = Component.text("RandomTP")
         }
     }
 
@@ -28,7 +29,7 @@ object RandomTP : InteractModule(), IStaffCommand {
     private fun teleportRandom(staff: Player) {
         val destination = PlayerList.alivePlayers.randomOrNull()?.bukkitPlayer?.location
         if (destination == null) {
-            staff.sendMessage("${StaffMode.prefix}${ChatColor.RED}Es wurde kein Spieler gefunden.")
+            staff.sendMessage("${StaffMode.prefix}${Color.RED}Es wurde kein Spieler gefunden.")
             return
         }
         staff.teleport(destination)

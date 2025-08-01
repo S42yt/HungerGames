@@ -17,9 +17,9 @@ val Smoothyy by Kit("smoothyy", ::SmoothyyProperties) {
     displayMaterial = Material.COOKED_CHICKEN
     description = "Taitos erstes kit! Es geht aber nichts haha"
 
-    simpleItem(ItemStack(Material.STAINED_CLAY, 1, 2))
-    simpleItem(ItemStack(Material.STAINED_CLAY, 9, 4))
-    simpleItem(ItemStack(Material.STAINED_CLAY, 1, 7))
+    simpleItem(ItemStack(Material.RED_TERRACOTTA, 1))
+    simpleItem(ItemStack(Material.YELLOW_TERRACOTTA, 9))
+    simpleItem(ItemStack(Material.GRAY_TERRACOTTA, 1))
 
     kitPlayerEvent<BlockPlaceEvent>({ it.player }) { it, player ->
         {
@@ -28,4 +28,3 @@ val Smoothyy by Kit("smoothyy", ::SmoothyyProperties) {
 
     }
 }
-

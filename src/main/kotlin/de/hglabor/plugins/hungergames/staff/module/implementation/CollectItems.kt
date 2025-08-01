@@ -9,6 +9,7 @@ import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -17,9 +18,9 @@ import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.inventory.ItemStack
 
 object CollectItems : InteractModule(), IStaffCommand {
-    override val item: ItemStack = staffItem(Material.LEASH) {
+    override val item: ItemStack = staffItem(Material.HOPPER) {
         meta {
-            name = "${KColors.RED}Toggle Collecting Items"
+            name = Component.text("CollectItems")
         }
     }
 

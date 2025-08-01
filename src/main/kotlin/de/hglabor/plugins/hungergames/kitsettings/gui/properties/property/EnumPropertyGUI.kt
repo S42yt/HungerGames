@@ -12,7 +12,8 @@ import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -24,21 +25,18 @@ object EnumPropertyGUI {
         kit: Kit<*>
     ) {
         player.openGUI(kSpigotGUI(GUIType.SIX_BY_NINE) {
-            title = "${Prefix}${property.settings.propertyName}"
+            title = Component.text("${Prefix}${property.settings.propertyName}")
             page(1) {
-                placeholder(Slots.All, ItemStack(Material.STAINED_GLASS_PANE, 1, 14).apply { meta { name = null } })
-                placeholder(Slots.Border, ItemStack(Material.STAINED_GLASS_PANE, 1, 13).apply { meta { name = null } })
-
+                placeholder(Slots.All, ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply { meta { name = null } })
+                placeholder(Slots.Border, ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply { meta { name = null } })
                 placeholder(Slots.RowFiveSlotFive, property.settings.display.displayItem)
-
-
                 val compound = createRectCompound<Enum<*>>(Slots.RowTwoSlotTwo, Slots.RowFiveSlotEight,
                     iconGenerator = { enum ->
-                        var isActive = property.get() == enum
-                        val colorData = if (isActive) 13 else 14
-                        ItemStack(Material.STAINED_GLASS_PANE, 1, colorData.toShort()).apply {
+                        val isActive = property.get() == enum
+                        val color = if (isActive) Color.GREEN else Color.RED
+                        ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                             meta {
-                                name = "${if (isActive) ChatColor.GREEN else ChatColor.RED}${enum.name}"
+                                name = Component.text("${color}${enum.name}")
                             }
                         }
                     }, onClick = { clickEvent, enum ->
@@ -48,25 +46,27 @@ object EnumPropertyGUI {
                     })
                 compound.sortContentBy { it.name }
                 compound.setContent((property.get()::class.java.enumConstants).toList())
-
                 compoundScroll(
                     Slots.RowSixSlotFive,
-                    ItemStack(Material.STAINED_GLASS_PANE, 1, 5).apply {
+                    ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                         meta {
-                            name = "${PrimaryColor}Next"
+                            name = Component.text("${PrimaryColor}Next")
                         }
-                    }, compound, scrollLines = 4, reverse = true
+                    }, compound, 7 * 4, reverse = true
                 )
                 compoundScroll(
-                    Slots.RowOneSlotFive,
-                    ItemStack(Material.STAINED_GLASS_PANE, 1, 14).apply {
+                    Slots.RowSixSlotOne,
+                    ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                         meta {
-                            name = "${PrimaryColor}Previous"
+                            name = Component.text("${PrimaryColor}Previous")
                         }
-                    }, compound, scrollLines = 4
+                    }, compound, 7 * 4
                 )
-
-                button(Slots.RowOneSlotNine, itemStack(Material.BARRIER) { meta { name = "${ChatColor.RED}Back" } }) {
+                button(Slots.RowOneSlotNine, ItemStack(Material.BARRIER, 1).apply {
+                    meta {
+                        name = Component.text("${Color.RED}Back")
+                    }
+                }) {
                     it.bukkitEvent.isCancelled = true
                     KitPropertiesGUI.openKitProperties(player, kit)
                 }

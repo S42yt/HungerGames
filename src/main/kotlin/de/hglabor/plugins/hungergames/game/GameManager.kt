@@ -12,17 +12,19 @@ import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.hungergames.utils.TimeConverter
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.broadcast
-import net.axay.kspigot.extensions.bukkit.title
 import net.axay.kspigot.extensions.onlinePlayers
 import net.axay.kspigot.runnables.sync
 import net.axay.kspigot.runnables.task
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Difficulty
 import org.bukkit.entity.EntityType
 import org.bukkit.event.HandlerList
 import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicLong
 
 object GameManager {
@@ -32,13 +34,13 @@ object GameManager {
     var feast: Feast? = null
 
     fun enable() {
-        world.difficulty = Difficulty.NORMAL
+        world?.difficulty = Difficulty.NORMAL
         phase.start()
         Bukkit.getPluginManager().registerEvents(phase, Manager)
-        world.setSpawnLocation(0, world.getHighestBlockYAt(0, 0) + 15, 0)
-        world.loadChunk(world.spawnLocation.chunk)
-        world.worldBorder.setCenter(0.0, 0.0)
-        world.worldBorder.size = 600.0*2
+        world?.setSpawnLocation(0, world.getHighestBlockYAt(0, 0) + 15, 0)
+        world?.loadChunk(world.spawnLocation.chunk)
+        world?.worldBorder?.setCenter(0.0, 0.0)
+        world?.worldBorder?.size = 600.0*2
         listen<PlayerJoinEvent> { it.player.hgPlayer.login() }
         listen<EntitySpawnEvent> {
             when(it.entity.type) {
@@ -75,12 +77,12 @@ object GameManager {
     }
 
     private fun phaseBroadcasts() {
-        val remaining = "${ChatColor.WHITE}${TimeConverter.stringify(phase.remainingTime.toInt())}${ChatColor.GRAY}"
+        val remaining = "${Color.WHITE}${TimeConverter.stringify(phase.remainingTime.toInt())}${Color.GRAY}"
         when (phase) {
             LobbyPhase -> {
                 when (LobbyPhase.remainingTime.toInt()) {
                     60, 30, 20, 10, 3, 2, 1 -> broadcast("${Prefix}The HungerGames are starting in ${remaining}.")
-                    0 -> onlinePlayers.forEach { it.title("${SecondaryColor}gl hf") }
+                    0 -> onlinePlayers.forEach { it.showTitle(Title.title(Component.text("${SecondaryColor}gl hf"), Component.empty(), Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(3500), Duration.ofMillis(1000)))) }
                 }
             }
 

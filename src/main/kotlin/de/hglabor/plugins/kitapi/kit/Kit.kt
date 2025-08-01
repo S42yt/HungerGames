@@ -10,7 +10,9 @@ import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.setLore
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit.spigot
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
@@ -65,15 +67,12 @@ open class Kit<P : KitProperties> private constructor(val key: String, val prope
             player.hgPlayer.enableKit()
             for (item in items.values) {
                 val kitItemStack = item.stack.apply {
-                    meta {
-                        displayName = "${ChatColor.DARK_PURPLE}${properties.kitname}"
-                        setLore {
-                            + "${ChatColor.DARK_PURPLE}Kititem"
-                        }
-                        spigot().isUnbreakable = true
-                        addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
-                        addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-                    }
+                    val meta = itemMeta
+                    meta?.setDisplayName("${Color.PURPLE}${properties.kitname}")
+                    meta?.setLore(listOf("${Color.PURPLE}Kititem"))
+                    meta?.isUnbreakable = true
+                    meta?.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES)
+                    itemMeta = meta
                 }
                 if (!player.inventory.contains(kitItemStack))
                     player.inventory.addItem(kitItemStack)
@@ -82,14 +81,14 @@ open class Kit<P : KitProperties> private constructor(val key: String, val prope
             if (properties is CooldownProperties) {
                 board.apply {
                     // Todo multiple kits
-                    /*addLineBelow("$PrimaryColor${ChatColor.BOLD}${properties.kitname}")
-                    addLineBelow { " ${SecondaryColor}${ChatColor.BOLD}Cooldown:#${ChatColor.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
+                    /*addLineBelow("$PrimaryColor${Color.BOLD}${properties.kitname}")
+                    addLineBelow { " ${SecondaryColor}${Color.BOLD}Cooldown:#${Color.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
                     if (properties is MultipleUsesCooldownProperties) {
-                        addLineBelow { " ${ChatColor.GRAY}${ChatColor.BOLD}Uses:#${ChatColor.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
+                        addLineBelow { " ${Color.GRAY}${Color.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
                     }*/
-                    addLineBelow { "${SecondaryColor}${ChatColor.BOLD}Cooldown:#${ChatColor.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
+                    addLineBelow { "${SecondaryColor}${TextDecoration.BOLD}Cooldown:#${Color.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
                     if (properties is MultipleUsesCooldownProperties) {
-                        addLineBelow { "${ChatColor.GRAY}${ChatColor.BOLD}Uses:#${ChatColor.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
+                        addLineBelow { "${Color.GRAY}${TextDecoration.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
                     }
 
                     addLineBelow(" ")

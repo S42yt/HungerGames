@@ -13,13 +13,14 @@ object SoupHealing {
         listen<PlayerInteractEvent> {
             it.player.apply {
                 if (it.action == Action.LEFT_CLICK_AIR) return@listen
-                if (itemInHand.type != Material.MUSHROOM_SOUP) return@listen
+                if (inventory.itemInMainHand.type != Material.MUSHROOM_STEW) return@listen
+                val maxHealth = getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)!!.value
                 if (health >= maxHealth - 0.4 && foodLevel >= 20) return@listen
-                Bukkit.getPluginManager().callEvent(PlayerSoupEvent(this, itemInHand))
+                Bukkit.getPluginManager().callEvent(PlayerSoupEvent(this, inventory.itemInMainHand))
                 health = min(maxHealth, health + 7)
                 foodLevel = min(20, foodLevel + 6)
                 saturation = min(20f, saturation + 6)
-                itemInHand.type = Material.BOWL
+                inventory.itemInMainHand.type = Material.BOWL
                 updateInventory()
             }
         }

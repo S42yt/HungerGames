@@ -6,7 +6,7 @@ import de.hglabor.plugins.kitapi.cooldown.applyCooldown
 import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.extensions.geometry.add
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
@@ -19,7 +19,7 @@ class DiggerProperties : CooldownProperties(12) {
 
 val Digger by Kit("Digger", ::DiggerProperties) {
     displayMaterial = Material.DRAGON_EGG
-    description = "${ChatColor.WHITE}Place ${ChatColor.GRAY}your kit-item to create a ${ChatColor.WHITE}${kit.properties.radius}x${kit.properties.radius}x${kit.properties.radius} hole"
+    description = "${Color.WHITE}Place ${Color.GRAY}your kit-item to create a ${Color.WHITE}${kit.properties.radius}x${kit.properties.radius}x${kit.properties.radius} hole"
 
     fun Block.isReplaceable(): Boolean =
         when {
@@ -44,7 +44,7 @@ val Digger by Kit("Digger", ::DiggerProperties) {
             val radius = kit.properties.radius
             val eggLocation = it.block.location
             taskRunLater(15, true) {
-                it.player.world.playSound(eggLocation, Sound.DIG_STONE, 1f, 1f)
+                it.player.world.playSound(eggLocation, Sound.ENTITY_WARDEN_DIG, 1f, 1f)
                 for (x in -radius..radius) {
                     for (y in -1 downTo -radius*2) {
                         for (z in -radius..radius) {

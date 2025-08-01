@@ -1,4 +1,4 @@
-package de.hglabor.plugins.hungergames.commands
+package de.hglabor.plugins.hungergames.commands.executer
 
 import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.SecondaryColor
@@ -13,14 +13,14 @@ import de.hglabor.plugins.kitapi.implementation.None
 import de.hglabor.plugins.kitapi.kit.KitManager
 import de.hglabor.plugins.kitapi.player.PlayerKits.chooseKit
 import net.axay.kspigot.gui.openGUI
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-object KitCommand : CommandExecutor, TabCompleter {
+class KitCommandExecutor : CommandExecutor {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
@@ -29,7 +29,7 @@ object KitCommand : CommandExecutor, TabCompleter {
     ): Boolean {
         val player = sender as? Player ?: return false
         if (RandomKits.internal.isEnabled) {
-            sender.sendMessage("${Prefix}${ChatColor.RED}You can't choose a kit whilst ${ChatColor.UNDERLINE}Random Kit${ChatColor.RED} is enabled")
+            sender.sendMessage("${Prefix}${Color.RED}You can't choose a kit whilst ${TextDecoration.UNDERLINED}Random Kit${Color.RED} is enabled")
             return false
         }
         when (GameManager.phase) {
@@ -47,7 +47,7 @@ object KitCommand : CommandExecutor, TabCompleter {
 
         if (args.size != 1) {
             player.openGUI(KitSelector.gui)
-            sender.sendMessage("${Prefix}Please use ${ChatColor.WHITE}/kit ${ChatColor.GRAY}<${SecondaryColor}Kit${ChatColor.GRAY}>.")
+            sender.sendMessage("${Prefix}Please use ${Color.WHITE}/kit ${Color.GRAY}<${SecondaryColor}Kit${Color.GRAY}>.")
             return false
         }
 
@@ -62,14 +62,5 @@ object KitCommand : CommandExecutor, TabCompleter {
         else
             player.sendMessage("${Prefix}This Kit is disabled.")
         return true
-    }
-
-    override fun onTabComplete(
-        sender: CommandSender?,
-        cmd: Command?,
-        label: String?,
-        args: Array<out String>?
-    ): MutableList<String> {
-        return KitManager.kits.filter { it.properties.isEnabled }.map { it.properties.kitname }.toMutableList()
     }
 }

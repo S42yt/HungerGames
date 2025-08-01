@@ -11,28 +11,29 @@ import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
 object SettingsGUI {
-    val item = itemStack(Material.COMMAND) {
+    val item = itemStack(Material.COMMAND_BLOCK) {
         meta {
-            name = "${PrimaryColor}Settings"
+            name = Component.text("${PrimaryColor}Settings")
         }
     }
 
     private val gui = kSpigotGUI(GUIType.THREE_BY_NINE) {
-        title = "${PrimaryColor}Settings"
+        title = Component.text("${PrimaryColor}Settings")
         page(1) {
-            placeholder(Slots.All, itemStack(Material.STAINED_GLASS_PANE) {
+            placeholder(Slots.All, itemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE) {
                 meta { name = null }
             })
 
-            button(Slots.RowTwoSlotThree, itemStack(Material.COMMAND) {
+            button(Slots.RowTwoSlotThree, itemStack(Material.COMMAND_BLOCK) {
                 meta {
-                    name = "${PrimaryColor}Mechanics"
+                    name = Component.text("${PrimaryColor}Mechanics")
                 }
             }) {
                 it.bukkitEvent.isCancelled = true
@@ -41,7 +42,7 @@ object SettingsGUI {
 
             button(Slots.RowTwoSlotSeven, itemStack(Material.CHEST) {
                 meta {
-                    name = "${PrimaryColor}Kit Settings"
+                    name = Component.text("${PrimaryColor}Kit Settings")
                 }
             }) {
                 it.bukkitEvent.isCancelled = true
@@ -56,7 +57,7 @@ object SettingsGUI {
                 it.player.inventory.remove(item)
                 return@listen
             }
-            if (it.player.inventory.itemInHand.equals(item)) {
+            if (it.player.inventory.itemInMainHand.isSimilar(item)) {
                 open(it.player)
             }
         }
@@ -66,7 +67,7 @@ object SettingsGUI {
                 it.player.inventory.remove(item)
                 return@listen
             }
-            if (it.player.itemInHand == KitSelector.kitSelectorItem) {
+            if (it.player.inventory.itemInMainHand.isSimilar(KitSelector.kitSelectorItem)) {
                 it.isCancelled = true
             }
         }

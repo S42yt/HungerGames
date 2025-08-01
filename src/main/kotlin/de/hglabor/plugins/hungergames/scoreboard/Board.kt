@@ -2,8 +2,10 @@ package de.hglabor.plugins.hungergames.scoreboard
 
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.DisplaySlot
 import org.bukkit.scoreboard.Objective
@@ -11,13 +13,13 @@ import org.bukkit.scoreboard.Team
 
 class Board(var updatingPeriod: Long = 20L) {
     val lines = mutableListOf<BoardLine>()
-    var title = ""
+    var title: Component = Component.empty()
         set(value) {
             field = value
-            objective.displayName = value
+            objective.displayName(value)
         }
     val scoreboard = Bukkit.getScoreboardManager().newScoreboard
-    val objective: Objective = scoreboard.registerNewObjective("aaa", "bbb")
+    val objective: Objective = scoreboard.registerNewObjective("aaa", "bbb", Component.empty())
     var runnable: KSpigotRunnable? = null
 
     init {
@@ -118,14 +120,7 @@ class Board(var updatingPeriod: Long = 20L) {
             team = scoreboard.getTeam("$index") ?: scoreboard.registerNewTeam("$index")
             entry = entry(index)
             team.addEntry(entry)
-            if (text.contains('#')) {
-                val (pre, suf) = text.split("#")
-                team.prefix = pre
-                team.suffix = " $suf"
-            } else {
-                team.prefix = text
-                team.suffix = ""
-            }
+            update()
             objective.getScore(entry).score = index
         }
 
@@ -134,13 +129,14 @@ class Board(var updatingPeriod: Long = 20L) {
         }
 
         fun update() {
-            if (text.contains('#')) {
-                val (pre, suf) = text.split("#")
-                team.prefix = pre
-                team.suffix = " $suf"
+            val legacySerializer = LegacyComponentSerializer.legacySection()
+            if (text.contains(':')) {
+                val (pre, suf) = text.split(":")
+                team.prefix(legacySerializer.deserialize(pre))
+                team.suffix(legacySerializer.deserialize(suf))
             } else {
-                team.prefix = text
-                team.suffix = ""
+                team.prefix(legacySerializer.deserialize(text))
+                team.suffix(Component.empty())
             }
         }
 
@@ -157,5 +153,7 @@ class Board(var updatingPeriod: Long = 20L) {
         val text: String get() = textCallback.invoke()
     }
 
-    private fun entry(index: Int) = "${ChatColor.values()[index]}${ChatColor.WHITE}"
+    private fun entry(index: Int): String {
+        return "§${index}"
+    }
 }

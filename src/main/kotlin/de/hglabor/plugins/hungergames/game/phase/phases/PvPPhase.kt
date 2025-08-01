@@ -2,7 +2,8 @@ package de.hglabor.plugins.hungergames.game.phase.phases
 
 import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.SecondaryColor
-import de.hglabor.plugins.hungergames.commands.BanSpecsCommand
+import de.hglabor.plugins.hungergames.commands.command.BanSpecsCommand
+import de.hglabor.plugins.hungergames.commands.executer.BanSpecsCommandExecutor
 import de.hglabor.plugins.hungergames.game.GameManager
 import de.hglabor.plugins.hungergames.game.mechanics.feast.Feast
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.KitSelector
@@ -20,11 +21,14 @@ import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.extensions.onlinePlayers
 import net.axay.kspigot.runnables.async
 import net.axay.kspigot.runnables.sync
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerPreLoginEvent
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import kotlin.collections.forEach
 
 object PvPPhase : IngamePhase(3600, EndPhase) {
     override val timeName = "Time"
@@ -37,7 +41,7 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
             if (hgPlayer.kit == None && !hgPlayer.changedKitBefore) {
                 val kit = KitManager.kits.filter { it.properties.isEnabled }.random()
                 player?.chooseKit(kit, false)
-                player?.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${ChatColor.GRAY}.")
+                player?.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${Color.GRAY}.")
             }
         }
     }
@@ -54,8 +58,8 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
         fun handleBorderShrink() {
             // Bordershrink - 20 min vor ende
             if (remainingTime.toInt() == 20 * 60) {
-                broadcast("${Prefix}${ChatColor.WHITE}${ChatColor.BOLD}The border starts shrinking now.")
-                GameManager.world.worldBorder.setSize(25.0 * 2, 10 * 60)
+                broadcast("${Prefix}${Color.WHITE}${TextDecoration.BOLD}The border starts shrinking now.")
+                GameManager.world?.worldBorder?.setSize(25.0 * 2, 10 * 60)
             }
         }
 
@@ -63,10 +67,11 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
             // Feast - nach 10 minuten announcen | 5 min später spawnt es
             if (tickCount == 600) {
                 val world = GameManager.world
-
-                GameManager.feast = Feast(world).apply {
-                    feastCenter = LocationUtils.getHighestBlock(world, (world.worldBorder.size / 4).toInt(), 0)
-                    spawn()
+                if (world != null) {
+                    GameManager.feast = Feast(world).apply {
+                        feastCenter = LocationUtils.getHighestBlock(world, (world.worldBorder.size / 4).toInt(), 0)
+                        spawn()
+                    }
                 }
             }
         }
@@ -81,16 +86,17 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
         fun teleportAutisticSpectators() {
             async {
                 if (tickCount % 2 != 0) return@async
-                val worldBorder = GameManager.world.worldBorder
-                val borderRadius = worldBorder.size / 2.0
+                val worldBorder = GameManager.world?.worldBorder
+                val borderRadius = worldBorder?.size?.div(2.0)
 
                 onlinePlayers.filter { it.gameMode == GameMode.SPECTATOR }.forEach { player ->
                     val playerLoc = player.location
-                    if (playerLoc.x > borderRadius || playerLoc.x < -borderRadius ||
-                        playerLoc.z > borderRadius || playerLoc.z < -borderRadius
+                    if (borderRadius != null &&
+                        (playerLoc.x > borderRadius || playerLoc.x < -borderRadius ||
+                                playerLoc.z > borderRadius || playerLoc.z < -borderRadius)
                     ) {
                         sync {
-                            player.teleport(GameManager.world.spawnLocation)
+                            GameManager.world.spawnLocation.let { safeLoc -> player.teleport(safeLoc) }
                         }
                     }
                 }
@@ -99,12 +105,12 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
 
         fun kickSpectatorsIfBanned() {
             if (tickCount % 5 != 0) return
-            if (BanSpecsCommand.allowSpecs) return
+            if (BanSpecsCommandExecutor.allowSpecs) return
             PlayerList.spectatingPlayers.mapNotNull {
                 if (it is StaffPlayer) null
                 else it.bukkitPlayer
             }.forEach {
-                it.kickPlayer("Sorry, you can't spectate anymore.")
+                it.kick(Component.text("Sorry, you can't spectate anymore."))
             }
         }
 
@@ -119,13 +125,16 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
     }
 
     @EventHandler
-    fun onPlayerPreLogin(event: PlayerPreLoginEvent) {
-        if (BanSpecsCommand.allowSpecs) return
+    fun onPlayerPreLogin(event: AsyncPlayerPreLoginEvent) {
+        if (BanSpecsCommandExecutor.allowSpecs) return
         if (Bukkit.getOfflinePlayer(event.uniqueId).isOp) return
         val hgPlayer = PlayerList.getPlayer(event.uniqueId)
         if (hgPlayer is StaffPlayer) return
         if (hgPlayer == null || hgPlayer.status == PlayerStatus.ELIMINATED || hgPlayer.status == PlayerStatus.SPECTATOR) {
-            event.disallow(PlayerPreLoginEvent.Result.KICK_WHITELIST, "Sorry, you can't spectate this game.")
+            event.disallow(
+                AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                Component.text("Sorry, you can't spectate this game.")
+            )
         }
     }
 }

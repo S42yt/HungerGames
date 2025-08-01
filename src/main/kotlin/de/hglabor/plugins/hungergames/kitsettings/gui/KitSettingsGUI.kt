@@ -15,7 +15,8 @@ import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
@@ -25,16 +26,18 @@ import org.bukkit.inventory.ItemStack
 
 object KitSettingsGUI {
     private val gui = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-        title = "${SecondaryColor}Kit Settings"
+        title = Component.text("${SecondaryColor}Kit Settings")
 
         page(1) {
             val compound = createRectCompound<Kit<*>>(Slots.RowOneSlotTwo, Slots.RowFiveSlotEight,
                 iconGenerator = { kit ->
                     kit.internal.displayItem.clone().apply {
                         meta {
-                            name = "${SecondaryColor}${kit.properties.kitname}"
+                            name = Component.text("${SecondaryColor}${kit.properties.kitname}")
                             addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-                            lore = kit.internal.description
+                            if (kit.internal.description != null) {
+                                lore(kit.internal.description as List<Component>)
+                            }
                         }
                     }
                 },
@@ -45,25 +48,25 @@ object KitSettingsGUI {
             compound.sortContentBy { kit -> kit.properties.kitname.lowercase() }
             compoundScroll(
                 Slots.RowThreeSlotNine,
-                ItemStack(Material.STAINED_GLASS_PANE, 1, 5).apply {
+                ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                     meta {
-                        name = "${PrimaryColor}Next"
+                        name = Component.text("${PrimaryColor}Next")
                     }
                 }, compound, 7 * 4, reverse = true
             )
             compoundScroll(
                 Slots.RowThreeSlotOne,
-                ItemStack(Material.STAINED_GLASS_PANE, 1, 14).apply {
+                ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                     meta {
-                        name = "${PrimaryColor}Previous"
+                        name = Component.text("${PrimaryColor}Previous")
                     }
                 }, compound, 7 * 4
             )
             compound.setContent(KitManager.kits)
 
-            button(Slots.RowOneSlotNine, itemStack(Material.BARRIER) {
+            button(Slots.RowOneSlotNine, ItemStack(Material.BARRIER, 1).apply {
                 meta {
-                    name = "${ChatColor.RED}Back"
+                    name = Component.text("${Color.RED}Back")
                 }
             }) {
                 it.bukkitEvent.isCancelled = true

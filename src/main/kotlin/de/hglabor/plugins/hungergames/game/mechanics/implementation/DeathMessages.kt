@@ -7,23 +7,25 @@ import de.hglabor.plugins.hungergames.player.PlayerList
 import de.hglabor.plugins.hungergames.player.hgPlayer
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.Color
 import org.bukkit.event.entity.PlayerDeathEvent
 
 object DeathMessages {
     fun announceArenaDeath(winner: HGPlayer, loser: HGPlayer) {
-        broadcast("${Arena.Prefix}${ChatColor.GREEN}${winner.name} ${ChatColor.GRAY}won the fight against ${ChatColor.RED}${loser.name}${ChatColor.GRAY}.")
+        broadcast("${Arena.Prefix}${Color.GREEN}${winner.name} ${Color.GRAY}won the fight against ${Color.RED}${loser.name}${Color.GRAY}.")
         broadcast("${Arena.Prefix}${winner.name} has been revived.")
     }
 
     fun announce(event: PlayerDeathEvent, enteredArena: Boolean) {
-        event.deathMessage = null
+        event.deathMessage(null)
         val hgPlayer = event.entity.hgPlayer
         if (event.entity.killer != null) {
-            announce(event.entity.killer.hgPlayer, hgPlayer)
+            announce(hgPlayer, event.entity.killer?.hgPlayer)
         } else {
-            if (event.deathMessage != null) {
-                announce(hgPlayer, event.deathMessage)
+            val deathMsg = event.deathMessage()
+            if (deathMsg != null) {
+                announce(hgPlayer, PlainTextComponentSerializer.plainText().serialize(deathMsg))
             } else {
                 announce(hgPlayer)
             }
@@ -33,32 +35,32 @@ object DeathMessages {
         }
     }
 
-    private fun announce(killer: HGPlayer, dead: HGPlayer) {
-        val deadText = "${ChatColor.RED}${dead.name} ${ChatColor.GRAY}(${ChatColor.DARK_RED}${dead.kit.properties.kitname}${ChatColor.GRAY})"
-        val killerText = "${ChatColor.GREEN}${killer.name} ${ChatColor.GRAY}(${ChatColor.DARK_GREEN}${killer.kit.properties.kitname}${ChatColor.GRAY})"
-        val slainText = " ${ChatColor.GRAY}was eliminated by "
+    private fun announce(dead: HGPlayer, killer: HGPlayer?) {
+        val deadText = "${Color.RED}${dead.name} ${Color.GRAY}(${Color.RED}${dead.kit.properties.kitname}${Color.GRAY})"
+        val killerText = "${Color.GREEN}${killer?.name} ${Color.GRAY}(${Color.GREEN}${killer?.kit?.properties?.kitname}${Color.GRAY})"
+        val slainText = " ${Color.GRAY}was eliminated by "
         broadcast(Prefix + deadText + slainText + killerText)
     }
 
-    private fun announce(dead: HGPlayer) {
-        val deadText = "${ChatColor.RED}${dead.name}"
-        broadcast(Prefix + deadText + ChatColor.GRAY + " was eliminated")
+    fun announce(dead: HGPlayer) {
+        val deadText = "${Color.RED}${dead.name}"
+        broadcast(Prefix + deadText + Color.GRAY + " was eliminated")
     }
 
-    private fun announce(dead: HGPlayer, deathMessage: String) {
-        val deadText = "${ChatColor.RED}${dead.name}${ChatColor.GRAY}"
+    fun announce(dead: HGPlayer, deathMessage: String) {
+        val deadText = "${Color.RED}${dead.name}${Color.GRAY}"
         var message = deathMessage
         if (message.contains("was slain by")) {
-            message = message.replace("was slain by", "was eliminated by${ChatColor.GREEN}")
+            message = message.replace("was slain by", "was eliminated by${Color.GREEN}")
         }
         broadcast(Prefix + message.replace(dead.name.toRegex(), deadText))
     }
 
     private fun announcePlayerCount(enteredArena: Boolean) {
         if (enteredArena) {
-            broadcast("${Arena.Prefix}They have entered the ${ChatColor.RED}Arena${ChatColor.GRAY}.")
+            broadcast("${Arena.Prefix}They have entered the ${Color.RED}Arena${Color.GRAY}.")
         } else {
-            broadcast("${Prefix}There are ${ChatColor.WHITE}${PlayerList.alivePlayers.size} ${ChatColor.GRAY}players left.")
+            broadcast("${Prefix}There are ${Color.WHITE}${PlayerList.alivePlayers.size} ${Color.GRAY}players left.")
         }
     }
 }

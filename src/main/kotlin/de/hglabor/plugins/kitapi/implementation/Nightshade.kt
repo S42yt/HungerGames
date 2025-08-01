@@ -13,7 +13,8 @@ import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -25,16 +26,16 @@ class NightshadeProperties  : CooldownProperties(20) {
 }
 
 val Nightshade by Kit("Nightshade", ::NightshadeProperties) {
-    displayMaterial = Material.NETHER_BRICK_ITEM
+    displayMaterial = Material.NETHER_BRICK
     description {
-        +"${ChatColor.WHITE}Right-click ${ChatColor.GRAY}a player to:"
-        +" ${ChatColor.DARK_GRAY}- ${ChatColor.WHITE}Reduce their health ${ChatColor.GRAY}for ${kit.properties.duration} seconds"
-        +" ${ChatColor.DARK_GRAY}- ${ChatColor.GRAY}Infect up to 2 soups"
-        +"${ChatColor.GRAY}When ${ChatColor.WHITE}presouping ${ChatColor.GRAY}or eating an ${ChatColor.WHITE}infected soup"
-        +"${ChatColor.GRAY}They will receive ${ChatColor.WHITE}wither effect"
+        +"${Color.WHITE}Right-click ${Color.GRAY}a player to:"
+        +" ${Color.GRAY}- ${Color.WHITE}Reduce their health ${Color.GRAY}for ${kit.properties.duration} seconds"
+        +" ${Color.GRAY}- ${Color.GRAY}Infect up to 2 soups"
+        +"${Color.GRAY}When ${Color.WHITE}presouping ${Color.GRAY}or eating an ${Color.WHITE}infected soup"
+        +"${Color.GRAY}They will receive ${Color.WHITE}wither effect"
     }
 
-    clickOnEntityItem(ItemStack(Material.NETHER_BRICK_ITEM)) {
+    clickOnEntityItem(ItemStack(Material.NETHER_BRICK)) {
         val rightClicked = it.rightClicked as? Player ?: return@clickOnEntityItem
         applyCooldown(it) {
             if (rightClicked.hasMark("nightshadeHealth")) {
@@ -50,14 +51,13 @@ val Nightshade by Kit("Nightshade", ::NightshadeProperties) {
                 val slot = (0..9)
                     .filter { s ->
                         val item = rightClicked.inventory.getItem(s)
-                        item != null && item.type == Material.MUSHROOM_SOUP && item.itemMeta != null && item.itemMeta.name != "Nightshade"
+                        item != null && item.type == Material.MUSHROOM_STEW && item.itemMeta != null && item.itemMeta.displayName != "Nightshade"
                     }.randomOrNull()
 
                 if (slot != null) {
-                    rightClicked.inventory.getItem(slot).apply {
-                        meta {
-                            name = "Nightshade"
-                        }
+                    var item = rightClicked.inventory.getItem(slot)
+                    item?.meta {
+                        displayName
                     }
                 }
             }
@@ -70,17 +70,17 @@ val Nightshade by Kit("Nightshade", ::NightshadeProperties) {
     }
 
     fun Player.giveNightshadeWither() {
-        player.mark("nightshadeEffect")
-        player.addPotionEffect(PotionEffect(PotionEffectType.WITHER, 80, 3))
+        player?.mark("nightshadeEffect")
+        player?.addPotionEffect(PotionEffect(PotionEffectType.WITHER, 80, 3))
         taskRunLater(80) {
-            player.unmark("nightshadeEffect")
+            player?.unmark("nightshadeEffect")
         }
     }
 
     listen<PlayerSoupEvent> {
         val player = it.player
 
-        if (player.itemInHand.itemMeta.name == "Nightshade") {
+        if (player.itemInHand.itemMeta?.displayName == "Nightshade") {
             player.giveNightshadeWither()
             return@listen
         }

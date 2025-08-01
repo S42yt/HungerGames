@@ -7,7 +7,7 @@ import de.hglabor.plugins.hungergames.game.phase.phases.EndPhase
 import de.hglabor.plugins.hungergames.player.PlayerList
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.task
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -30,10 +30,10 @@ val ArenaMechanic by Mechanic("Arena") {
                 revived.bukkitPlayer?.inventory?.apply {
                     addItem(ItemStack(Material.STONE_SWORD))
                     for (i in 0..35) {
-                        addItem(ItemStack(Material.MUSHROOM_SOUP))
+                        addItem(ItemStack(Material.MUSHROOM_STEW))
                     }
                 }
-                broadcast("${Arena.Prefix}${ChatColor.WHITE}${revived.name} ${ChatColor.GRAY}was revived.")
+                broadcast("${Arena.Prefix}${Color.WHITE}${revived.name} ${Color.GRAY}was revived.")
             }
 
             if (Arena.currentMatch?.isEnded == false) {

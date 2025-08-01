@@ -10,7 +10,8 @@ import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.items.toLoreList
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -21,32 +22,31 @@ import org.bukkit.inventory.ItemStack
 
 object MechanicsGUI {
     private val gui = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-        title = "${PrimaryColor}Mechanics"
+        title = Component.text("${PrimaryColor}Mechanics")
 
         page(1) {
-            placeholder(Slots.RowOneSlotOne linTo Slots.RowFiveSlotOne, itemStack(Material.STAINED_GLASS_PANE) {
-                meta { name = "" }
+            placeholder(Slots.RowOneSlotOne linTo Slots.RowFiveSlotOne, itemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE) {
+                meta { name = Component.text("") }
             })
-            placeholder(Slots.RowOneSlotNine linTo Slots.RowFiveSlotNine, itemStack(Material.STAINED_GLASS_PANE) {
-                meta { name = "" }
+            placeholder(Slots.RowOneSlotNine linTo Slots.RowFiveSlotNine, itemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE) {
+                meta { name = Component.text("") }
             })
-            placeholder(Slots.RowFive, itemStack(Material.STAINED_GLASS_PANE) {
-                meta { name = "" }
+            placeholder(Slots.RowFive, itemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE) {
+                meta { name = Component.text("") }
             })
 
             val compound = createRectCompound<Mechanic>(Slots.RowThreeSlotTwo, Slots.RowFourSlotEight,
                 iconGenerator = { mechanic ->
                     mechanic.internal.displayItem.clone().apply {
                         meta {
-                            name =
-                                "${if (mechanic.internal.isEnabled) ChatColor.GREEN else ChatColor.RED}${mechanic.name}"
+                            name = Component.text("${if (mechanic.internal.isEnabled) Color.GREEN else Color.RED}${mechanic.name}")
                             addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                             addItemFlags(ItemFlag.HIDE_ENCHANTS)
                             if (mechanic.internal.isEnabled) {
-                                addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+                                addUnsafeEnchantment(Enchantment.UNBREAKING, 1)
                             }
                             mechanic.description?.let { description ->
-                                lore = description.toLoreList()
+                                lore(description.toLoreList())
                             }
                         }
                     }
@@ -59,40 +59,39 @@ object MechanicsGUI {
             compound.sortContentBy { mechanic -> mechanic.name.lowercase() }
             /*compoundScroll(
                 Slots.RowThreeSlotNine,
-                ItemStack(Material.STAINED_GLASS_PANE, 1, 5).apply {
+A                ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                     meta {
-                        name = "${PrimaryColor}Next"
+                        name = Component.text("${PrimaryColor}Next")
                     }
                 }, compound, 7 * 4, reverse = true
             )
             compoundScroll(
                 Slots.RowThreeSlotOne,
-                ItemStack(Material.STAINED_GLASS_PANE, 1, 14).apply {
+                ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                     meta {
-                        name = "${PrimaryColor}Previous"
+                        name = Component.text("${PrimaryColor}Previous")
                     }
                 }, compound, 7 * 4
             )*/
             compound.setContent(MechanicsManager.mechanics.filter { !it.isEvent })
 
-            placeholder(Slots.RowOneSlotOne, itemStack(Material.COMMAND) {
+            placeholder(Slots.RowOneSlotOne, itemStack(Material.COMMAND_BLOCK) {
                 meta {
-                    name = "${PrimaryColor}Event Mechanics"
+                    name = Component.text("${PrimaryColor}Event Mechanics")
                 }
             })
             val specialCompound = createRectCompound<Mechanic>(Slots.RowOneSlotTwo, Slots.RowOneSlotEight,
                 iconGenerator = { mechanic ->
                     mechanic.internal.displayItem.clone().apply {
                         meta {
-                            name =
-                                "${if (mechanic.internal.isEnabled) ChatColor.GREEN else ChatColor.RED}${mechanic.name}"
+                            name = Component.text("${if (mechanic.internal.isEnabled) Color.GREEN else Color.RED}${mechanic.name}")
                             addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                             addItemFlags(ItemFlag.HIDE_ENCHANTS)
                             if (mechanic.internal.isEnabled) {
-                                addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+                                addUnsafeEnchantment(Enchantment.UNBREAKING, 1)
                             }
                             mechanic.description?.let { description ->
-                                lore = description.toLoreList()
+                                lore(description.toLoreList())
                             }
                         }
                     }
@@ -106,7 +105,7 @@ object MechanicsGUI {
             specialCompound.setContent(MechanicsManager.mechanics.filter { it.isEvent })
             button(Slots.RowOneSlotNine, itemStack(Material.BARRIER) {
                 meta {
-                    name = "${ChatColor.RED}Back"
+                    name = Component.text("${Color.RED}Back")
                 }
             }) {
                 it.bukkitEvent.isCancelled = true

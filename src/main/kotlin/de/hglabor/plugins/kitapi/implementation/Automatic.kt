@@ -2,7 +2,7 @@ package de.hglabor.plugins.kitapi.implementation
 
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
@@ -14,8 +14,8 @@ class AutomaticProperties : KitProperties() {
 }
 
 val Automatic by Kit("Automatic", ::AutomaticProperties) {
-    displayMaterial = Material.MUSHROOM_SOUP
-    description = "${ChatColor.GRAY}The ${ChatColor.WHITE}soups ${ChatColor.GRAY}in your hotbar will ${ChatColor.WHITE}automatically ${ChatColor.GRAY}be ${ChatColor.WHITE}consumed ${ChatColor.GRAY}when needed"
+    displayMaterial = Material.MUSHROOM_STEW
+    description = "${Color.GRAY}The ${Color.WHITE}soups ${Color.GRAY}in your hotbar will ${Color.WHITE}automatically ${Color.GRAY}be ${Color.WHITE}consumed ${Color.GRAY}when needed"
 
     kitPlayerEvent<EntityDamageEvent>({ it.entity as? Player }) { _, player ->
         val maxHealth = player.maxHealth
@@ -23,7 +23,7 @@ val Automatic by Kit("Automatic", ::AutomaticProperties) {
 
         for (i in 0 until 9) {
             val item = player.inventory.getItem(i) ?: continue
-            if (item.type != Material.MUSHROOM_SOUP) continue
+            if (item.type != Material.MUSHROOM_STEW) continue
             player.health = min(player.health + this.kit.properties.soupHealAmount, maxHealth)
             player.inventory.setItem(i, ItemStack(Material.AIR))
             item.type = Material.BOWL

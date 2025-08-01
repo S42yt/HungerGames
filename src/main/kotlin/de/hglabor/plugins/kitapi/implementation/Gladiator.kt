@@ -16,7 +16,7 @@ import net.axay.kspigot.extensions.geometry.subtract
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
@@ -117,9 +117,9 @@ class GladiatorInstance(private val gladiator: Player, playerTwo: Player) {
         players.forEachIndexed { index, player ->
             player.teleport(spawnLocations[index].setDirectionTo(spawnLocations[if (index == 1) 0 else 1]))
             player.mark("inGladi")
-            player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40, 10))
-            player.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 10, 128))
-            player.addPotionEffect(PotionEffect(PotionEffectType.JUMP, 10, 128))
+            player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 40, 10))
+            player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 10, 128))
+            player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 10, 128))
         }
     }
 
@@ -137,7 +137,7 @@ class GladiatorInstance(private val gladiator: Player, playerTwo: Player) {
             if (player.hgPlayer.isAlive)
                 player.teleport(oldLocations[index])
             player.unmark("inGladi")
-            player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40, 10))
+            player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 40, 10))
             player.removePotionEffect(PotionEffectType.WITHER)
         }
 
@@ -171,10 +171,12 @@ class GladiatorInstance(private val gladiator: Player, playerTwo: Player) {
         val world = GameManager.world
 
         for (loc in locations) {
-            if (!(loc.blockX < world.worldBorder.size + 1 && loc.blockX > -world.worldBorder.size - 1)) {
+            val borderSize = world?.worldBorder?.size
+            if (borderSize == null) return false
+            if (!(loc.blockX < borderSize + 1 && loc.blockX > -borderSize - 1)) {
                 return false
             }
-            if (!(loc.blockY < world.worldBorder.size + 1 && loc.blockY > -world.worldBorder.size - 1)) {
+            if (!(loc.blockY < borderSize + 1 && loc.blockY > -borderSize - 1)) {
                 return false
             }
 
@@ -189,8 +191,8 @@ class GladiatorInstance(private val gladiator: Player, playerTwo: Player) {
 
 
 val Gladiator by Kit("Gladiator", ::GladiatorProperties) {
-    displayMaterial = Material.IRON_FENCE
-    description = "${ChatColor.WHITE}Right-click ${ChatColor.GRAY}a player to 1v1 them in an arena"
+    displayMaterial = Material.IRON_BARS
+    description = "${Color.WHITE}Right-click ${Color.GRAY}a player to 1v1 them in an arena"
 
     val gladiatorInstances: HashMap<UUID, GladiatorInstance> = hashMapOf()
 
@@ -202,7 +204,7 @@ val Gladiator by Kit("Gladiator", ::GladiatorProperties) {
         gladiatorInstance.endFight()
     }
 
-    clickOnEntityItem(ItemStack(Material.IRON_FENCE)) {
+    clickOnEntityItem(ItemStack(Material.IRON_BARS)) {
         val rightClicked = it.rightClicked as? Player ?: return@clickOnEntityItem
         if (!rightClicked.hgPlayer.isAlive) return@clickOnEntityItem
         if (it.player.isInGladiator || rightClicked.isInGladiator) return@clickOnEntityItem
@@ -214,20 +216,20 @@ val Gladiator by Kit("Gladiator", ::GladiatorProperties) {
 
     fun breakGladiatorBlock(block: Block) {
         val type = block.type
-        val id = block.data
 
         if (type == kit.properties.material) {
-            block.setTypeIdAndData(Material.STAINED_GLASS.id, 14, false)
+            block.type = Material.LIGHT_GRAY_STAINED_GLASS_PANE
             return
         }
 
-        when (id) {
-            14.toByte() -> block.setTypeIdAndData(Material.STAINED_GLASS.id, 4, false)
-            4.toByte() -> block.setTypeIdAndData(Material.STAINED_GLASS.id, 5, false)
-            5.toByte() -> {
-                block.setType(Material.AIR, false)
+        when (block.type) {
+            Material.LIGHT_GRAY_STAINED_GLASS_PANE -> block.type = Material.YELLOW_STAINED_GLASS
+            Material.YELLOW_STAINED_GLASS -> block.type = Material.LIME_STAINED_GLASS
+            Material.LIME_STAINED_GLASS -> {
+                block.type = Material.AIR
                 block.removeMetadata("gladiBlock", Manager)
             }
+            else -> {}
         }
     }
 

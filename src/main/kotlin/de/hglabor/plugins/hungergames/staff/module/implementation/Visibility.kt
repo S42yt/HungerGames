@@ -9,15 +9,17 @@ import de.hglabor.plugins.hungergames.staff.module.command.staffCommand
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.ItemStack
 
 object Visibility : InteractModule(), IStaffCommand{
-    override val item = staffItem(Material.GLASS_BOTTLE) {
+    override val item: ItemStack = staffItem(Material.ENDER_EYE) {
         meta {
-            name = "${ChatColor.RED}Toggle Visibility"
+            name = Component.text("Visibility")
         }
     }
 

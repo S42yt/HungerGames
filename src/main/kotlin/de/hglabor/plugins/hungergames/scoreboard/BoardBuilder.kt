@@ -1,15 +1,16 @@
 package de.hglabor.plugins.hungergames.scoreboard
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.entity.Player
 
 
 class BoardBuilder(val board: Board) {
     var lineBuilder = LineBuilder()
 
-    var title: String
+    var title: Component
         set(value) {
             board.title = value
-            board.objective.displayName = value
         }
         get() = board.title
 

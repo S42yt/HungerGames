@@ -1,2 +1,2 @@
 # HungerGames
- A 1.8 HungerGames plugin for the HGLabor.de server
+ A 1.21 HungerGames plugin for the HGLabor.de server

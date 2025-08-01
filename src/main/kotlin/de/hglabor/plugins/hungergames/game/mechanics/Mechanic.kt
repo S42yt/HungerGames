@@ -36,7 +36,7 @@ class Mechanic(val name: String, val isEvent: Boolean) {
 
     val internal = this.Internal()
 
-    open var description: String? = null
+    var description: String? = null
 
     fun onEnable() {
         internal.onEnable?.invoke()

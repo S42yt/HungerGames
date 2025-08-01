@@ -12,7 +12,8 @@ import de.hglabor.plugins.kitapi.kit.KitManager
 import de.hglabor.plugins.kitapi.player.PlayerKits.chooseKit
 import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.extensions.onlinePlayers
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerJoinEvent
 
@@ -28,7 +29,7 @@ val RandomKits by Mechanic("Random Kits", isEvent = true) {
                 player.sendMessage("${Prefix}Your kit was removed.")
             }
         }
-        broadcast("${ChatColor.GREEN}${ChatColor.BOLD}Random Kits has been enabled for this round.")
+        broadcast("${Color.GREEN}${TextDecoration.BOLD}Random Kits has been enabled for this round.")
     }
 
     onGameStart {
@@ -36,7 +37,7 @@ val RandomKits by Mechanic("Random Kits", isEvent = true) {
             if (player.hgPlayer.kit == None && !player.hgPlayer.changedKitBefore) {
                 val kit = KitManager.kits.filter { it != None && it.properties.isEnabled }.random()
                 player.chooseKit(kit, false)
-                player.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${ChatColor.GRAY}.")
+                player.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${Color.GRAY}.")
             }
         }
     }
@@ -46,7 +47,7 @@ val RandomKits by Mechanic("Random Kits", isEvent = true) {
         onlinePlayers.forEach {
             it.inventory.addItem(KitSelector.kitSelectorItem)
         }
-        broadcast("${ChatColor.RED}${ChatColor.BOLD}Random Kits has been disabled for this round.")
+        broadcast("${Color.RED}${TextDecoration.BOLD}Random Kits has been disabled for this round.")
     }
 
     mechanicEvent<PlayerJoinEvent> {
@@ -55,6 +56,6 @@ val RandomKits by Mechanic("Random Kits", isEvent = true) {
         if (player.hgPlayer.kit != None) return@mechanicEvent
         val kit = KitManager.kits.filter { it != None && it.properties.isEnabled }.random()
         player.chooseKit(kit, false)
-        player.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${ChatColor.GRAY}.")
+        player.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${Color.GRAY}.")
     }
 }

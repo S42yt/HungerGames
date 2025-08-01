@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 val RecraftNerf by Mechanic("Recraft Nerf") {
-    displayMaterial = Material.MUSHROOM_SOUP
+    displayMaterial = Material.MUSHROOM_STEW
 
     val MAX_RECRAFT = 64
     val SECONDS_BETWEEN_CHECK = 10
@@ -23,7 +23,7 @@ val RecraftNerf by Mechanic("Recraft Nerf") {
 
     fun getRecraftItems(player: Player): List<Pair<Int, ItemStack>> {
         return player.inventory.contents.mapIndexedNotNull { index, item ->
-            if (item != null && item.type != null && item.isRecraftMaterial() && !item.isKitItem) index to item
+            if (item != null && item.isRecraftMaterial() && !item.isKitItem) index to item
             else null
         }
     }
@@ -119,8 +119,8 @@ val RecraftNerf by Mechanic("Recraft Nerf") {
     }
 }
 
-private val recraftMaterials = listOf(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CACTUS)
-private fun ItemStack.isCocoa() = type == Material.INK_SACK && data.data.toInt() == 3
+private val recraftMaterials = listOf(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CACTUS, Material.BROWN_DYE)
+private fun ItemStack.isCocoa() = type == Material.BROWN_DYE
 private fun ItemStack.isRecraftMaterial(): Boolean {
     return isCocoa() || type in recraftMaterials
 }

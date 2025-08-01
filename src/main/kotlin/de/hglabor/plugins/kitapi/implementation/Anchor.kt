@@ -6,7 +6,7 @@ import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
 import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -22,9 +22,9 @@ class AnchorProperties : KitProperties() {
 
 val Anchor by Kit("Anchor", ::AnchorProperties) {
     displayMaterial = Material.ANVIL
-    description = "${ChatColor.GRAY}You neither deal nor take knockback"
+    description = "${Color.GRAY}You neither deal nor take knockback"
 
-    fun slownessEffect() = PotionEffect(PotionEffectType.SLOW, kit.properties.slownessDuration * 20, kit.properties.slownessAmplifier)
+    fun slownessEffect() = PotionEffect(PotionEffectType.SLOWNESS, kit.properties.slownessDuration * 20, kit.properties.slownessAmplifier)
 
 
     kitPlayerEvent<EntityDamageByEntityEvent>({ it.damager as? Player }) { it, _ ->

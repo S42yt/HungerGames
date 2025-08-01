@@ -9,10 +9,11 @@ import de.hglabor.plugins.hungergames.game.mechanics.implementation.KitSelector
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.PlayerTracker
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.RecraftRecipes
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.SoupHealing
-import de.hglabor.plugins.hungergames.staff.StaffCommand
+import de.hglabor.plugins.hungergames.commands.command.StaffCommand
+import de.hglabor.plugins.hungergames.player.OffhandBlocker
 import net.axay.kspigot.extensions.bukkit.register
 import net.axay.kspigot.main.KSpigot
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.WorldCreator
 import java.io.File
 
@@ -32,32 +33,15 @@ class HungerGames : KSpigot() {
         registerListeners()
         this.server.createWorld(WorldCreator("arena"))
         registerMechanics()
-        registerCommands()
+        Command.registerAll()
     }
 
     override fun shutdown() {
 
     }
 
-    private fun registerCommands() {
-        StartCommand.register("start")
-        FeastCommand.register("feast")
-        ReviveCommand.register("revive")
-        ArenaTpCommand.register("arenatp")
-        InfoCommand.register("info")
-        ListCommand.register("list")
-        KitCommand.register("kit")
-        StaffCommand.register("staffmode")
-        BanSpecsCommand.register("banspecs")
-        getCommand("kit").apply {
-            executor = KitCommand
-            tabCompleter = KitCommand
-        }
-        SettingsCommand.register("settings")
-    }
-
     private fun registerListeners() {
-
+        OffhandBlocker.register()
     }
 
     private fun registerMechanics() {
@@ -71,6 +55,6 @@ class HungerGames : KSpigot() {
 }
 
 val Manager by lazy { HungerGames.INSTANCE }
-val PrimaryColor = ChatColor.DARK_PURPLE
-val SecondaryColor = ChatColor.LIGHT_PURPLE
-val Prefix = " ${ChatColor.DARK_GRAY}| ${PrimaryColor}HGLabor ${ChatColor.DARK_GRAY}» ${ChatColor.GRAY}"
+val PrimaryColor = Color.PURPLE
+val SecondaryColor = Color.MAROON
+val Prefix = " ${Color.GRAY}| ${PrimaryColor}HGLabor ${Color.GRAY}» ${Color.SILVER}"

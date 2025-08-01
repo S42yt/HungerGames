@@ -9,6 +9,7 @@ import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -20,7 +21,7 @@ import org.bukkit.inventory.ItemStack
 object BuildMode : InteractModule(), IStaffCommand {
     override var item: ItemStack = staffItem(Material.COBBLESTONE) {
         meta {
-            name = "${KColors.RED}Toggle Buildmode"
+            name = Component.text("Toggle Buildmode")
         }
     }
 

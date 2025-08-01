@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val javaVersion = "1.8"
-val mcVersion = "1.8.8"
+val javaVersion = "21"
+val mcVersion = "1.21"
 
 group = "de.hglabor"
 version = "${mcVersion}_v1"
@@ -9,36 +9,39 @@ version = "${mcVersion}_v1"
 description = "Minecraft Hunger Games in $mcVersion"
 
 plugins {
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.shadow)
 
     `java-library`
-    id("com.github.johnrengelman.shadow") version "7.0.0" // Used for building the plugin
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.1" // Generates plugin.yml
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/central")
     maven("https://oss.sonatype.org/content/groups/public/")
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    // Spigot
-    compileOnly("org.spigotmc", "spigot-api", "$mcVersion-R0.1-SNAPSHOT")
+    implementation(libs.kotlin.stdlib)
+    
+    // Paper API
+    compileOnly(libs.paper.api)
 
-    // KSpigot
-    implementation(files("libs/KSpigot-1.8.0.jar"))
+    // KSpigot (if still needed, otherwise remove)
+    implementation(files("libs/kspigot-1.21.0.jar"))
 
     // KMONGO
-    implementation("org.litote.kmongo", "kmongo", "4.5.1")
-    implementation("org.litote.kmongo", "kmongo-serialization-mapping", "4.5.1")
+    implementation(libs.kmongo)
+    implementation(libs.kmongo.serialization)
 
-    // Kotlin
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.6.0-native-mt")
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    
+    // Kotlin Serialization
+    implementation(libs.kotlinx.serialization.json)
 }
 
 tasks {
@@ -46,53 +49,13 @@ tasks {
         fun reloc(pkg: String) = relocate(pkg, "de.hglabor.dependency.$pkg")
         reloc("net.axay")
         //reloc("de.hglabor")
+        mergeServiceFiles()
     }
+    
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = javaVersion
-            freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-        }
-    }
-}
-
-// Configure plugin.yml generation
-bukkit {
-    load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-    main = "de.hglabor.plugins.hungergames.HungerGames"
-    apiVersion = "1.8"
-    softDepend = listOf("WorldEdit")
-    authors = listOf("BestAuto")
-    commands {
-        register("start") {
-            description = "Start the next gamephase"
-        }
-        register("kit") {
-            description = "Choose a kit"
-        }
-        register("feast") {
-            description = "Point your compass towards the feast"
-        }
-        register("revive") {
-            description = "Revive a player"
-        }
-        register("settings") {
-            description = "Open the settings gui"
-        }
-        register("arenatp") {
-            description = "Teleport into arena world"
-        }
-        register("info") {
-            description = "Info about the game"
-        }
-        register("list") {
-            description = "Show all competing players"
-        }
-        register("staffmode") {
-            description = "Enter staffmode"
-            aliases = listOf("staff", "v", "vanish", "mod", "modmode")
-        }
-        register("banspecs") {
-            description = "Bans spectators for this game"
+            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
 }

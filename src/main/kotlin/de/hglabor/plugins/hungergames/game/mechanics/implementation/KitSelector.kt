@@ -22,7 +22,9 @@ import net.axay.kspigot.gui.openGUI
 import net.axay.kspigot.items.itemStack
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -30,25 +32,24 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 object KitSelector {
-    val kitSelectorItem = itemStack(Material.CHEST) { meta { name = "${SecondaryColor}Kit Selector" } }
+    val kitSelectorItem = itemStack(Material.CHEST) { meta { name = Component.text("${SecondaryColor}Kit Selector") } }
     val gui
         get() = kSpigotGUI(GUIType.FIVE_BY_NINE) {
-            title = "${SecondaryColor}Kit Selector"
+            title = Component.text("${SecondaryColor}Kit Selector")
             page(1) {
                 val compound = createRectCompound<Kit<*>>(Slots.RowOneSlotTwo, Slots.RowFiveSlotEight,
                     iconGenerator = { kit ->
                         kit.internal.displayItem.clone().apply {
                             meta {
-                                name = "${SecondaryColor}${kit.properties.kitname}"
+                                name = Component.text("${SecondaryColor}${kit.properties.kitname}")
                                 addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-                                lore = kit.internal.description
                             }
                         }
                     },
                     onClick = { clickEvent, kit ->
                         clickEvent.bukkitEvent.isCancelled = true
                         if (RandomKits.internal.isEnabled) {
-                            clickEvent.player.sendMessage("$Prefix${ChatColor.RED}You can't choose a kit whilst ${ChatColor.UNDERLINE}Random Kit${ChatColor.RED} is enabled")
+                            clickEvent.player.sendMessage("$Prefix${Color.RED}You can't choose a kit whilst ${TextDecoration.UNDERLINED}Random Kit${Color.RED} is enabled")
                         } else {
                             clickEvent.player.chooseKit(kit)
                         }
@@ -57,17 +58,17 @@ object KitSelector {
                 compound.sortContentBy { kit -> kit.properties.kitname.lowercase() }
                 compoundScroll(
                     Slots.RowThreeSlotNine,
-                    ItemStack(Material.STAINED_GLASS_PANE, 1, 5).apply {
+                    ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                         meta {
-                            name = "${PrimaryColor}Next"
+                            name = Component.text("${PrimaryColor}Next")
                         }
                     }, compound, 7 * 4, reverse = true
                 )
                 compoundScroll(
                     Slots.RowThreeSlotOne,
-                    ItemStack(Material.STAINED_GLASS_PANE, 1, 14).apply {
+                    ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1).apply {
                         meta {
-                            name = "${PrimaryColor}Previous"
+                            name = Component.text("${PrimaryColor}Previous")
                         }
                     }, compound, 7 * 4
                 )
@@ -89,7 +90,7 @@ object KitSelector {
 
         listen<BlockPlaceEvent> {
             if (RandomKits.internal.isEnabled) return@listen
-            if (it.player.itemInHand == kitSelectorItem) {
+            if (it.player.inventory.itemInMainHand.isSimilar(kitSelectorItem)) {
                 it.isCancelled = true
             }
         }
@@ -103,7 +104,7 @@ object KitSelector {
                 if (!newValue && GameManager.phase == LobbyPhase) {
                     hgPlayer.kit = None
                     hgPlayer.changedKitBefore = false
-                    hgPlayer.bukkitPlayer?.sendMessage("${Prefix}Your kit has been ${ChatColor.RED}disabled${ChatColor.GRAY}.")
+                    hgPlayer.bukkitPlayer?.sendMessage("${Prefix}Your kit has been ${Color.RED}disabled${Color.GRAY}.")
                 }
             }
         }

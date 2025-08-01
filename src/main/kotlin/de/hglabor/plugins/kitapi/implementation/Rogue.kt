@@ -7,7 +7,7 @@ import de.hglabor.plugins.kitapi.cooldown.applyCooldown
 import de.hglabor.plugins.kitapi.kit.Kit
 import kotlinx.coroutines.*
 import net.axay.kspigot.extensions.events.isRightClick
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -19,7 +19,7 @@ class RogueProperties : CooldownProperties(16) {
 
 val Rogue by Kit("Rogue", ::RogueProperties) {
     displayMaterial = Material.STICK
-    description = "${ChatColor.GRAY}Disable your enemies' kits"
+    description = "${Color.GRAY}Disable your enemies' kits"
 
     val coroutineScope = CoroutineScope(Dispatchers.Default)
     clickableItem(ItemStack(Material.STICK)) {
@@ -38,12 +38,12 @@ val Rogue by Kit("Rogue", ::RogueProperties) {
 
                 coroutineScope.launch {
                     hgPlayer.disableKit(isByRogue = true)
-                    player.sendMessage("${Prefix}Your kit has been ${ChatColor.RED}disabled${ChatColor.GRAY}.")
+                    player.sendMessage("${Prefix}Your kit has been ${Color.RED}disabled${Color.GRAY}.")
 
                     delay(kit.properties.duration * 1000L)
 
                     hgPlayer.enableKit()
-                    player.sendMessage("${Prefix}Your kit has been ${ChatColor.GREEN}enabled${ChatColor.GRAY}.")
+                    player.sendMessage("${Prefix}Your kit has been ${Color.GREEN}enabled${Color.GRAY}.")
                 }
             }
         }

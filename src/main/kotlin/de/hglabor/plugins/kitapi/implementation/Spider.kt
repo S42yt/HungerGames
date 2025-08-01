@@ -13,7 +13,7 @@ import de.hglabor.plugins.kitapi.kit.isKitItem
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.bukkit.actionBar
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -41,9 +41,9 @@ class SpiderProperties : CooldownProperties(20) {
 val Spider by Kit("Spider", ::SpiderProperties) {
     displayMaterial = Material.SPIDER_EYE
     description {
-        +"${ChatColor.WHITE}Hit ${ChatColor.GRAY}your enemy to poison them"
-        +"${ChatColor.WHITE}Hold your kit-item ${ChatColor.GRAY}to climb walls"
-        +"${ChatColor.WHITE}Throw your kit-item ${ChatColor.GRAY}to create a sphere of cobwebs"
+        +"${Color.WHITE}Hit ${Color.GRAY}your enemy to poison them"
+        +"${Color.WHITE}Hold your kit-item ${Color.GRAY}to climb walls"
+        +"${Color.WHITE}Throw your kit-item ${Color.GRAY}to create a sphere of cobwebs"
     }
 
     val spiderSnowball = "spidersb"
@@ -62,11 +62,11 @@ val Spider by Kit("Spider", ::SpiderProperties) {
     }
 
     // Spiderman abilities
-    clickableItem(ItemStack(Material.WEB), useInInvincibility = false) {
+    clickableItem(ItemStack(Material.COBWEB), useInInvincibility = false) {
         applyCooldown(it) {
             val player = it.player
 
-            val snowball = player.throwSnowball()
+            val snowball = player.launchProjectile(Snowball::class.java)
             snowball.mark(spiderSnowball)
         }
     }
@@ -79,7 +79,7 @@ val Spider by Kit("Spider", ::SpiderProperties) {
                 continue
             }
             result.add(location.block)
-            location.block.type = Material.WEB
+            location.block.type = Material.COBWEB
         }
         return result
     }
@@ -90,7 +90,7 @@ val Spider by Kit("Spider", ::SpiderProperties) {
         val spiderNet = createSpiderNet(snowball.location)
         taskRunLater(15 * 20) {
             for (block in spiderNet) {
-                if (block.type == Material.WEB) {
+                if (block.type == Material.COBWEB) {
                     block.type = Material.AIR
                 }
             }
@@ -111,7 +111,7 @@ val Spider by Kit("Spider", ::SpiderProperties) {
 
     kitPlayerEvent<PlayerMoveEvent>( { it.player }) { _, player ->
         if (!player.hgPlayer.isAlive) return@kitPlayerEvent
-        if (!player.itemInHand.isKitItem  || player.itemInHand.type != Material.WEB) return@kitPlayerEvent
+        if (!player.itemInHand.isKitItem  || player.itemInHand.type != Material.COBWEB) return@kitPlayerEvent
 
         // Fly in cobweb
         /*
@@ -131,7 +131,7 @@ val Spider by Kit("Spider", ::SpiderProperties) {
         // CLIMB WALLS
         if (nearWall(0.5, player)) {
             if (hasCooldown(player)) {
-                player.actionBar("${ChatColor.GRAY}Can't climb while on cooldown")
+                player.actionBar("${Color.GRAY}Can't climb while on cooldown")
                 return@kitPlayerEvent
             }
             player.velocity = Vector(0.0, kit.properties.climbVelocity, 0.0)

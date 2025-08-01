@@ -12,7 +12,7 @@ object WorldUtils {
     private val defaultQueue = BlockQueue()
 
     fun setBlockInstantly(block: Block, material: Material, data: Byte = 0) {
-        block.setTypeIdAndData(material.id, data, true)
+        block.type = material
     }
 
     fun setBlockInstantly(location: Location, material: Material, data: Byte = 0) {

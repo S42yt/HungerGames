@@ -13,8 +13,17 @@ val BlocksToInv by Mechanic("Blocks to Inv") {
         if (it.isCancelled) return@mechanicEvent
         if (it.player.hgPlayer.isInCombat) return@mechanicEvent
         when (it.block.type) {
-            Material.LOG,
-            Material.LOG_2,
+            Material.OAK_LOG,
+            Material.SPRUCE_LOG,
+            Material.BIRCH_LOG,
+            Material.JUNGLE_LOG,
+            Material.ACACIA_LOG,
+            Material.DARK_OAK_LOG,
+            Material.MANGROVE_LOG,
+            Material.CHERRY_LOG,
+            Material.BAMBOO_BLOCK,
+            Material.CRIMSON_STEM,
+            Material.WARPED_STEM,
             Material.COBBLESTONE,
             Material.RED_MUSHROOM,
             Material.BROWN_MUSHROOM,

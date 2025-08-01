@@ -12,7 +12,7 @@ import net.axay.kspigot.extensions.broadcast
 import net.axay.kspigot.runnables.sync
 import net.axay.kspigot.runnables.task
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -27,7 +27,7 @@ import kotlin.random.Random
 class Feast(val world: World) : Listener {
     private val feastBlocks: MutableSet<Block> = HashSet()
     var feastCenter: Location? = null
-    var platformMaterial: Material = Material.GRASS
+    var platformMaterial: Material = Material.GRASS_BLOCK
     var radius = 20
     var timer: AtomicInteger = AtomicInteger(300)
     var totalTime = 0
@@ -63,7 +63,7 @@ class Feast(val world: World) : Listener {
     }
 
     private fun spawnFeastLoot() {
-        feastCenter!!.clone().add(0.0, 1.0, 0.0).block.type = Material.ENCHANTMENT_TABLE
+        feastCenter!!.clone().add(0.0, 1.0, 0.0).block.type = Material.ENCHANTING_TABLE
         val chestLocations = arrayOf(
             feastCenter!!.clone().add(1.0, 1.0, 1.0),
             feastCenter!!.clone().add(-1.0, 1.0, 1.0),
@@ -99,11 +99,11 @@ class Feast(val world: World) : Listener {
         val sizeableItems: RandomCollection<ItemStack> = RandomCollection()
         sizeableItems.add(1.0, ItemStack(Material.COOKED_BEEF))
         sizeableItems.add(1.0, ItemStack(Material.COOKED_CHICKEN))
-        sizeableItems.add(1.0, ItemStack(Material.MUSHROOM_SOUP))
+        sizeableItems.add(1.0, ItemStack(Material.MUSHROOM_STEW))
 
         val singleItems: RandomCollection<ItemStack> = RandomCollection()
         singleItems.add(1.0, ItemStack(Material.BOW))
-        singleItems.add(1.0, ItemStack(Material.WEB))
+        singleItems.add(1.0, ItemStack(Material.COBWEB))
         singleItems.add(1.0, ItemStack(Material.FLINT_AND_STEEL))
         singleItems.add(1.0, ItemStack(Material.TNT))
         singleItems.add(1.0, ItemStack(Material.ENDER_PEARL))
@@ -113,7 +113,7 @@ class Feast(val world: World) : Listener {
         val meta: PotionMeta = strengthPotion.itemMeta as PotionMeta
         meta.addCustomEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2500, 0), true)
         strengthPotion.setItemMeta(meta)*/
-        singleItems.add(0.2, ItemStack(Material.POTION, 1, 16393.toShort()))
+        singleItems.add(0.2, ItemStack(Material.POTION, 1))
 
         val lootPool: RandomCollection<RandomCollection<ItemStack>> = RandomCollection()
         lootPool.add(21.0, ironItems)
@@ -121,7 +121,7 @@ class Feast(val world: World) : Listener {
         lootPool.add(33.0, sizeableItems)
         lootPool.add(33.0, singleItems)
         for (chestLocation in chestLocations) {
-            val chest = chestLocation!!.block.state as Chest
+            val chest = chestLocation.block.state as Chest
             for (i in 0 until maxItemsInChest) {
                 val randomItemCollection: RandomCollection<ItemStack> = lootPool.getRandom()
                 val item: ItemStack = randomItemCollection.getRandom()
@@ -131,7 +131,12 @@ class Feast(val world: World) : Listener {
                 if (shouldDamageItems) {
                     if (randomItemCollection == diamondItems) {
                         val maxDurability: Int = item.type.maxDurability.toInt()
-                        item.durability = (maxDurability - Random.nextInt(maxDurability / 4)).toShort()
+                        val damage = (maxDurability - Random.nextInt(maxDurability / 4))
+                        val meta = item.itemMeta
+                        if(meta is org.bukkit.inventory.meta.Damageable) {
+                            meta.damage = damage
+                            item.itemMeta = meta
+                        }
                     }
                 }
                 chest.inventory.setItem(Random.nextInt(26 - 1) + 1, item)
@@ -163,17 +168,17 @@ class Feast(val world: World) : Listener {
     }
 
     private fun announceFeast() {
-        broadcast("${Prefix}Feast will spawn at ${getCenterString()} ${ChatColor.GRAY}in ${getTimeString()}${ChatColor.GRAY}.")
+        broadcast("${Prefix}Feast will spawn at ${getCenterString()} ${Color.SILVER}in ${getTimeString()}${Color.SILVER}.")
     }
 
     private fun getCenterString(): String? {
         val loc = feastCenter ?: return null
-        return "${SecondaryColor}${loc.blockX}${ChatColor.DARK_GRAY}, ${SecondaryColor}${loc.blockY}${ChatColor.DARK_GRAY}, ${SecondaryColor}${loc.blockZ}${ChatColor.DARK_GRAY}"
+        return "${SecondaryColor}${loc.blockX}${Color.GRAY}, ${SecondaryColor}${loc.blockY}${Color.GRAY}, ${SecondaryColor}${loc.blockZ}${Color.GRAY}"
     }
 
     private fun getTimeString(): String {
         val time = timer.get()
-        return "${ChatColor.WHITE}${TimeConverter.stringify(time)}"
+        return "${Color.WHITE}${TimeConverter.stringify(time)}"
     }
 
     companion object {

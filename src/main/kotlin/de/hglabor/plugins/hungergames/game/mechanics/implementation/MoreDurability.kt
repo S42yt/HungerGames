@@ -6,7 +6,6 @@ import net.axay.kspigot.event.listen
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerItemDamageEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.material.MaterialData
 
 val MoreDurability by Mechanic("More Durability") {
     description = "Items (excluding armor) will have more durability"

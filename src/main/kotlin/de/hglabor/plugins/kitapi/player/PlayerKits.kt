@@ -10,7 +10,7 @@ import de.hglabor.plugins.hungergames.game.phase.phases.PvPPhase
 import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.kitapi.kit.*
 import net.axay.kspigot.event.listen
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.ItemSpawnEvent
@@ -26,7 +26,7 @@ object PlayerKits {
             val hgPlayer = event.player.hgPlayer
             val playerKit = hgPlayer.kit
             if (item.isKitItem) {
-                val kitKey = item.itemMeta.displayName.split("${ChatColor.DARK_PURPLE}").last()
+                val kitKey = item.itemMeta.displayName.split("${Color.PURPLE}").last()
                 if (!event.player.hasKit(KitManager.kits.first { it.properties.kitname == kitKey })) return@listen
                 val kitItem = playerKit.internal.items.toList().first { it.second.stack == item }.second
                 if (kitItem is ClickableKitItem) {
@@ -44,7 +44,7 @@ object PlayerKits {
             val hgPlayer = event.player.hgPlayer
             val playerKit = hgPlayer.kit
             if (item.isKitItem) {
-                val kitKey = item.itemMeta.displayName.split("${ChatColor.DARK_PURPLE}").last()
+                val kitKey = item.itemMeta.displayName.split("${Color.PURPLE}").last()
                 if (!event.player.hasKit(KitManager.kits.first { it.properties.kitname == kitKey })) return@listen
                 val kitItem = playerKit.internal.items.toList().first { it.second.stack == item }.second
                 if (kitItem is ClickOnEntityKitItem) {
@@ -62,7 +62,7 @@ object PlayerKits {
             val hgPlayer = event.player.hgPlayer
             val playerKit = hgPlayer.kit
             if (item.isKitItem) {
-                val kitKey = item.itemMeta.displayName.split("${ChatColor.DARK_PURPLE}").last()
+                val kitKey = item.itemMeta.displayName.split("${Color.PURPLE}").last()
                 if (!event.player.hasKit(KitManager.kits.first { it.properties.kitname == kitKey })) return@listen
                 val kitItem = playerKit.internal.items.toList().first { it.second.stack == item }.second
                 if (kitItem is PlaceableKitItem) {
@@ -114,7 +114,7 @@ object PlayerKits {
         hgPlayer.kit = kit
         hgPlayer.changedKitBefore = true
         if (sendMessage) {
-            sendMessage("${Prefix}You chose the kit ${SecondaryColor}${kit.properties.kitname}${ChatColor.GRAY}.")
+            sendMessage("${Prefix}You chose the kit ${SecondaryColor}${kit.properties.kitname}${Color.GRAY}.")
         }
         if (GameManager.phase != LobbyPhase)
             kit.internal.givePlayer(this)

@@ -19,5 +19,5 @@ class PlayerSoupEvent(player: Player, val soup: ItemStack) : PlayerEvent(player)
         return HANDLERS
     }
 
-    val overhealed: Boolean = player.health + 7 > player.maxHealth
+    val overhealed: Boolean = player.health + 7 > player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)!!.value
 }

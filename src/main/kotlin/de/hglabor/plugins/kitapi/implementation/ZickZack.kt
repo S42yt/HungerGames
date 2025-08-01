@@ -4,9 +4,9 @@ import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.hungergames.utils.ChanceUtils
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
-import org.bukkit.ChatColor
-import org.bukkit.Effect
+import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
@@ -20,7 +20,7 @@ class ZickZackProperties : KitProperties() {
 
 val ZickZack by Kit("ZickZack", ::ZickZackProperties) {
     displayMaterial = Material.DIAMOND_BLOCK
-    description = "${ChatColor.GRAY}After having a combo on a player, you will have a shield, ${ChatColor.WHITE}blocking incoming damage"
+    description = "${Color.GRAY}After having a combo on a player, you will have a shield, ${Color.WHITE}blocking incoming damage"
 
     val comboMap: HashMap<UUID, AtomicInteger> = hashMapOf()
     val shieldMap: HashMap<UUID, AtomicInteger> = hashMapOf()
@@ -40,7 +40,7 @@ val ZickZack by Kit("ZickZack", ::ZickZackProperties) {
         val shield = shieldMap[player.uniqueId] ?: return@kitPlayerEvent
         if (shield.get() > 0) {
             it.isCancelled = true
-            player.world.playEffect(player.eyeLocation.add(0.0, 0.5, 0.0), Effect.HEART, shield.decrementAndGet())
+            player.world.spawnParticle(Particle.HEART, player.eyeLocation.add(0.0, 0.5, 0.0), shield.decrementAndGet())
             return@kitPlayerEvent
         }
     }

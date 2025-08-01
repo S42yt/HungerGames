@@ -9,7 +9,7 @@ import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.utils.OnlinePlayerMap
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Entity
@@ -26,7 +26,7 @@ class NinjaProperties : CooldownProperties(10) {
 
 val Ninja by Kit("Ninja", ::NinjaProperties) {
     displayMaterial = Material.EMERALD
-    description = "${ChatColor.GRAY}Sneak to teleport behind your latest enemy"
+    description = "${Color.GRAY}Sneak to teleport behind your latest enemy"
 
     val lastDamaged = OnlinePlayerMap<Player?>()
     val lastDamagedTask = OnlinePlayerMap<KSpigotRunnable?>()

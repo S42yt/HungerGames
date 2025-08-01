@@ -5,7 +5,9 @@ import de.hglabor.plugins.hungergames.SecondaryColor
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.items.setLore
-import org.bukkit.ChatColor
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.lang.StringBuilder
@@ -17,16 +19,16 @@ sealed class PropertySettings(val property: KitProperties.KitProperty<*>) {
     open inner class PropertyDisplay {
         private fun getPreferredMaterial(): Material {
             val materialMap = hashMapOf(
-                "enabled" to Material.COMMAND,
+                "enabled" to Material.COMMAND_BLOCK,
                 "duration" to Material.REDSTONE,
                 "amplifier" to Material.GLOWSTONE_DUST,
                 "likelihood" to Material.DISPENSER,
-                "soup" to Material.MUSHROOM_SOUP,
+                "soup" to Material.MUSHROOM_STEW,
                 "distance" to Material.COMPASS,
                 "radius" to Material.ENDER_PEARL,
                 "height" to Material.LADDER,
-                "time" to Material.WATCH,
-                "cooldown" to Material.WATCH,
+                "time" to Material.CLOCK,
+                "cooldown" to Material.CLOCK,
                 "uses" to Material.LEVER,
                 "material" to Material.STONE,
                 "fire" to Material.FLINT_AND_STEEL
@@ -45,19 +47,19 @@ sealed class PropertySettings(val property: KitProperties.KitProperty<*>) {
             get() {
                 return field.apply {
                     meta {
-                        name = "$PrimaryColor$propertyName"
+                        displayName(Component.text("$PrimaryColor$propertyName"))
                         if (showValue) {
                             setLore {
-                                +"${ChatColor.WHITE}Value ${ChatColor.DARK_GRAY}\u00BB $SecondaryColor${property.get()} $valueLoreExtension"
-                                +"${ChatColor.WHITE}Default ${ChatColor.DARK_GRAY}\u00BB $SecondaryColor${property.defaultValue} $valueLoreExtension"
+                                +"${Color.WHITE}Value ${Color.GRAY}\u00BB $SecondaryColor${property.get()} $valueLoreExtension"
+                                +"${Color.WHITE}Default ${Color.GRAY}\u00BB $SecondaryColor${property.defaultValue} $valueLoreExtension"
 
                                 if (this@PropertySettings is NumberPropertySettings) {
                                     if (max != Int.MAX_VALUE || min != Int.MIN_VALUE) {
-                                        +"${ChatColor.DARK_GRAY}${ChatColor.STRIKETHROUGH}                    "
+                                        +"${Color.GRAY}${TextDecoration.STRIKETHROUGH}                    "
                                         if (min != Int.MIN_VALUE)
-                                            +"${ChatColor.GRAY}Min ${ChatColor.DARK_GRAY}\u00BB $SecondaryColor${min} $valueLoreExtension"
+                                            +"${Color.SILVER}Min ${Color.GRAY}\u00BB $SecondaryColor${min} $valueLoreExtension"
                                         if (max != Int.MAX_VALUE)
-                                            +"${ChatColor.GRAY}Max ${ChatColor.DARK_GRAY}\u00BB $SecondaryColor${max} $valueLoreExtension"
+                                            +"${Color.SILVER}Max ${Color.GRAY}\u00BB $SecondaryColor${max} $valueLoreExtension"
                                     }
                                 }
                             }

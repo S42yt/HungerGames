@@ -2,22 +2,19 @@ package de.hglabor.plugins.hungergames.game.mechanics.implementation
 
 import net.axay.kspigot.extensions.server
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapelessRecipe
-import org.bukkit.material.MaterialData
 
 object RecraftRecipes {
     fun register() {
-        server.addRecipe(recipe(MaterialData(Material.CACTUS)))
-        server.addRecipe(recipe(MaterialData(Material.INK_SACK, 3)))
+        server.addRecipe(recipe("cactus", Material.CACTUS))
+        server.addRecipe(recipe("ink_sac", Material.INK_SAC))
     }
 
-    fun recipe(materialData: MaterialData): ShapelessRecipe =
-        ShapelessRecipe(ItemStack(Material.MUSHROOM_SOUP)).apply {
+    fun recipe(key: String, material: Material): ShapelessRecipe =
+        ShapelessRecipe(NamespacedKey("hungergames", key), ItemStack(Material.MUSHROOM_STEW)).apply {
             addIngredient(Material.BOWL)
-            addIngredient(materialData)
+            addIngredient(material)
         }
 }
-
-
-

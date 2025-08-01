@@ -15,7 +15,7 @@ import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
@@ -36,15 +36,15 @@ class EndermageProperties : MultipleUsesCooldownProperties(5, 15) {
 private val whoMaged = mutableMapOf<UUID, UUID>()
 
 val Endermage by Kit("Endermage", ::EndermageProperties) {
-    displayMaterial = Material.ENDER_PORTAL_FRAME
+    displayMaterial = Material.END_PORTAL_FRAME
     description {
-        +"${ChatColor.WHITE}Place ${ChatColor.GRAY}your kit-item to teleport other player to you"
-        +"${ChatColor.GRAY}After teleporting you are invulnerable for 5 seconds"
+        +"${Color.WHITE}Place ${Color.GRAY}your kit-item to teleport other player to you"
+        +"${Color.GRAY}After teleporting you are invulnerable for 5 seconds"
     }
 
     val mageInstances = mutableMapOf<UUID, EndermageSearch>()
 
-    clickableItem(ItemStack(Material.EYE_OF_ENDER)) {
+    clickableItem(ItemStack(Material.ENDER_EYE)) {
         it.isCancelled = true
         val player = it.player
         applyCooldown(player) {
@@ -53,10 +53,10 @@ val Endermage by Kit("Endermage", ::EndermageProperties) {
                 return@clickableItem
             }
             val clickedBlock = it.clickedBlock ?: return@clickableItem
-            clickedBlock.type = Material.ENDER_PORTAL_FRAME
+            clickedBlock.type = Material.END_PORTAL_FRAME
             mageInstances[player.uniqueId] = EndermageSearch(player, clickedBlock.location.add(0.5, 1.0, 0.5))
             taskRunLater(kit.properties.searchTime*20L) {
-                clickedBlock.type = Material.ENDER_STONE
+                clickedBlock.type = Material.END_STONE
                 mageInstances[player.uniqueId]?.cancelSearching()
                 mageInstances.remove(player.uniqueId)
             }
@@ -111,7 +111,7 @@ class EndermageSearch(mage: Player, val location: Location) {
                 player.teleport(location)
                 whoMaged[player.uniqueId] = mageUUID
                 player.mark("wasMaged")
-                player.sendMessage("${Prefix}You have been ${SecondaryColor}maged${ChatColor.GRAY}! You are now ${ChatColor.WHITE}invulnerable ${ChatColor.GRAY}for ${ChatColor.WHITE}5 seconds${ChatColor.GRAY}.")
+                player.sendMessage("${Prefix}You have been ${SecondaryColor}maged${Color.GRAY}! You are now ${Color.WHITE}invulnerable ${Color.GRAY}for ${Color.WHITE}5 seconds${Color.GRAY}.")
 
                 taskRunLater(5*20) {
                     if (whoMaged[entity.uniqueId] == mageUUID) {
@@ -131,5 +131,5 @@ class EndermageSearch(mage: Player, val location: Location) {
     }
 
     private val Player.isMagable: Boolean
-        get() = !(player.isInGladiator || player.isInUltimato)
+        get() = !(player?.isInGladiator == true || player?.isInUltimato == true)
 }

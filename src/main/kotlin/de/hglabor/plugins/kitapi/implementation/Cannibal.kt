@@ -6,7 +6,7 @@ import de.hglabor.plugins.hungergames.utils.ChanceUtils.roll
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
 import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -23,8 +23,8 @@ class CannibalProperties : KitProperties() {
 val Cannibal by Kit("Cannibal", ::CannibalProperties) {
     displayMaterial = Material.ROTTEN_FLESH
     description {
-        +"${ChatColor.WHITE}Hitting ${ChatColor.GRAY}players feeds you."
-        +"${ChatColor.WHITE}Hit ${ChatColor.GRAY}players get hunger effect."
+        +"${Color.WHITE}Hitting ${Color.GRAY}players feeds you."
+        +"${Color.WHITE}Hit ${Color.GRAY}players get hunger effect."
     }
 
     fun slownessEffect() = PotionEffect(PotionEffectType.HUNGER, kit.properties.hungerDuration * 20, kit.properties.hungerAmplifier)

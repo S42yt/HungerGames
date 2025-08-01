@@ -4,7 +4,7 @@ import de.hglabor.plugins.kitapi.cooldown.CooldownProperties
 import de.hglabor.plugins.kitapi.cooldown.applyCooldown
 import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.extensions.events.isRightClick
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
@@ -18,20 +18,20 @@ class TobleroneProperties : CooldownProperties(120) {
 }
 
 fun rand(min: Int, max: Int): Int {
-    if (min >= max) println("${ChatColor.RED}THE MIN=$min IS BIGGER THAN THE MAX=$max")
+    if (min >= max) println("${Color.RED}THE MIN=$min IS BIGGER THAN THE MAX=$max")
     return (min..max).random()
 }
 
 val Toblerone by Kit("Toblerone", ::TobleroneProperties) {
-    displayItem = ItemStack(Material.INK_SACK, 1, 3)
-    description = "${ChatColor.GRAY}Eat your chocolate to receive speed and jump boost"
+    displayItem = ItemStack(Material.INK_SAC, 1, 3)
+    description = "${Color.GRAY}Eat your chocolate to receive speed and jump boost"
 
-    clickableItem(ItemStack(Material.INK_SACK, 1, 3)) {
+    clickableItem(ItemStack(Material.INK_SAC, 1, 3)) {
         it.isCancelled = true
         if (!it.action.isRightClick) return@clickableItem
 
         applyCooldown(it) {
-            it.player.playSound(it.player.location, Sound.EAT, 2f, 1f)
+            it.player.playSound(it.player.location, Sound.ENTITY_PLAYER_BURP, 2f, 1f)
             it.player.addPotionEffect(
                 PotionEffect(
                     PotionEffectType.SPEED,
@@ -41,7 +41,7 @@ val Toblerone by Kit("Toblerone", ::TobleroneProperties) {
             )
             it.player.addPotionEffect(
                 PotionEffect(
-                    PotionEffectType.JUMP,
+                    PotionEffectType.JUMP_BOOST,
                     kit.properties.effectDuration * 20,
                     rand(kit.properties.minEffectAmplifier, kit.properties.maxEffectAmplifier)
                 )

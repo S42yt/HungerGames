@@ -14,7 +14,7 @@ val DamageNerf by Mechanic("Damage Nerf") {
 
     fun isCritical(player: Player): Boolean {
         return player.fallDistance > 0.0f &&
-                !player.isOnGround &&
+                !player.isSwimming &&
                 !player.isInsideVehicle &&
                 !player.hasPotionEffect(PotionEffectType.BLINDNESS) && player.location.block.type != Material.LADDER && player.location.block.type != Material.VINE
     }
@@ -22,7 +22,7 @@ val DamageNerf by Mechanic("Damage Nerf") {
     mechanicEvent<EntityDamageByEntityEvent>(priority = EventPriority.LOW) {
         val damager = it.damager as? Player ?: return@mechanicEvent
         if (!(it.damager is Player && it.entity is Player)) return@mechanicEvent
-        val itemName = damager.itemInHand.type.name.lowercase()
+        val itemName = damager.inventory.itemInMainHand.type.name.lowercase()
         if (itemName.endsWith("_sword") || itemName.endsWith("_axe"))
             it.damage *= if (isCritical(damager)) 0.5 else 0.65
     }

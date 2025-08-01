@@ -14,10 +14,11 @@ import net.axay.kspigot.extensions.bukkit.spawnCleanEntity
 import net.axay.kspigot.extensions.geometry.add
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -87,9 +88,16 @@ class UltimatoInstance(private val ultimato: Player) {
     }
 
     private fun createArena() {
+        val dustOptions = Particle.DustOptions(Color.fromRGB(255, 0, 0), 1.0f)
         WorldUtils.makeCircle(centerLocation.clone().add(0, -3, 0), properties.radius, 12, true, false)
             .forEach {
-                it.world.playEffect(it, Effect.COLOURED_DUST, 3)
+                it.world.spawnParticle(
+                    Particle.DUST,
+                    it.toLocation(it.world).add(0.5, 0.5, 0.5),
+                    3,
+                    0.0, 0.0, 0.0, 0.0,
+                    dustOptions
+                )
             }
     }
 
@@ -110,10 +118,10 @@ class UltimatoInstance(private val ultimato: Player) {
 
 
 val Ultimato by Kit("Ultimato", ::UltimatoProperties) {
-    displayItem = ItemStack(Material.STAINED_GLASS_PANE, 1, 14)
-    description = "${ChatColor.GRAY}Create an arena to fight nearby players"
+    displayItem = ItemStack(Material.RED_STAINED_GLASS_PANE, 1)
+    description = "${Color.GRAY}Create an arena to fight nearby players"
 
-    clickableItem(ItemStack(Material.STAINED_GLASS_PANE, 1, 14), useInInvincibility = false) {
+    clickableItem(ItemStack(Material.RED_STAINED_GLASS_PANE, 1), useInInvincibility = false) {
         if (it.player.isInUltimato || it.player.isInGladiator) return@clickableItem
         val radius = kit.properties.radius
         if (it.player.getNearbyEntities(radius.toDouble(), 128.0, radius.toDouble())

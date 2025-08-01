@@ -2,7 +2,7 @@ package de.hglabor.plugins.kitapi.implementation
 
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
-import org.bukkit.ChatColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -16,13 +16,26 @@ class LumberjackProperties : KitProperties() {
 }
 
 val Lumberjack by Kit("Lumberjack", ::LumberjackProperties) {
-    displayMaterial = Material.LOG
-    description = "${ChatColor.WHITE}Break an entire tree ${ChatColor.GRAY}by breaking just one log"
+    displayMaterial = Material.OAK_LOG
+    description = "${Color.WHITE}Break an entire tree ${Color.GRAY}by breaking just one log"
 
-    simpleItem(ItemStack(Material.WOOD_AXE))
+    simpleItem(ItemStack(Material.WOODEN_AXE))
 
-    fun isWood(block: Block) =
-        block.type == Material.LOG || block.type == Material.LOG_2 || block.type == Material.HUGE_MUSHROOM_1 || block.type == Material.HUGE_MUSHROOM_2
+    val woodMaterials = setOf(
+        Material.OAK_LOG,
+        Material.SPRUCE_LOG,
+        Material.BIRCH_LOG,
+        Material.JUNGLE_LOG,
+        Material.ACACIA_LOG,
+        Material.DARK_OAK_LOG,
+        Material.CRIMSON_STEM,
+        Material.WARPED_STEM,
+        Material.MUSHROOM_STEM,
+        Material.BROWN_MUSHROOM_BLOCK,
+        Material.RED_MUSHROOM_BLOCK,
+    )
+
+    fun isWood(block: Block) = block.type in woodMaterials
 
 
     fun breakSurroundingWood(block: Block, atomicInteger: AtomicInteger) {
