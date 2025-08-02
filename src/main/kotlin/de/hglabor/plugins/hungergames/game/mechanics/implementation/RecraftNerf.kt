@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.Material
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -65,7 +67,7 @@ val RecraftNerf by Mechanic("Recraft Nerf") {
         val totalRecraft = countRecraftItems(mergedStacks.map { it.second })
         var remainingToRemove = totalRecraft - MAX_RECRAFT
         if (remainingToRemove <= 0) return
-        player.sendMessage("${Prefix}Sorry, you can't carry more than 64 recraft at the time.")
+        player.sendMessage(Prefix.append(Component.text("Sorry, you can't carry more than 64 recraft at the time.")))
 //        player.sendMessage("Recraft nerf:")
 //        player.sendMessage(" - You had a total of: $totalRecraft")
 //        mergedStacks.onEach {

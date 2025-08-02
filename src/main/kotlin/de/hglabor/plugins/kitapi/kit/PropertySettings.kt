@@ -7,7 +7,7 @@ import net.axay.kspigot.items.name
 import net.axay.kspigot.items.setLore
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import java.lang.StringBuilder
@@ -43,26 +43,24 @@ sealed class PropertySettings(val property: KitProperties.KitProperty<*>) {
          * The item that will be shown in the property-gui
          * The name and lore of the item will be overwritten later
          */
-        var displayItem = ItemStack(getPreferredMaterial())
+        var displayItem: ItemStack = ItemStack(Material.BARRIER)
             get() {
                 return field.apply {
                     meta {
-                        displayName(Component.text("$PrimaryColor$propertyName"))
+                        displayName(Component.text(propertyName, PrimaryColor))
                         if (showValue) {
-                            setLore {
-                                +"${Color.WHITE}Value ${Color.GRAY}\u00BB $SecondaryColor${property.get()} $valueLoreExtension"
-                                +"${Color.WHITE}Default ${Color.GRAY}\u00BB $SecondaryColor${property.defaultValue} $valueLoreExtension"
-
-                                if (this@PropertySettings is NumberPropertySettings) {
-                                    if (max != Int.MAX_VALUE || min != Int.MIN_VALUE) {
-                                        +"${Color.GRAY}${TextDecoration.STRIKETHROUGH}                    "
-                                        if (min != Int.MIN_VALUE)
-                                            +"${Color.SILVER}Min ${Color.GRAY}\u00BB $SecondaryColor${min} $valueLoreExtension"
-                                        if (max != Int.MAX_VALUE)
-                                            +"${Color.SILVER}Max ${Color.GRAY}\u00BB $SecondaryColor${max} $valueLoreExtension"
-                                    }
+                            val loreList = mutableListOf<String>()
+                            loreList.add("Value » ${property.get()} $valueLoreExtension")
+                            loreList.add("Default » ${property.defaultValue} $valueLoreExtension")
+                            if (this@PropertySettings is NumberPropertySettings) {
+                                if (max != Int.MAX_VALUE || min != Int.MIN_VALUE) {
+                                    if (min != Int.MIN_VALUE)
+                                        loreList.add("Min » $min $valueLoreExtension")
+                                    if (max != Int.MAX_VALUE)
+                                        loreList.add("Max » $max $valueLoreExtension")
                                 }
                             }
+                            setLore(loreList)
                         }
                     }
                 }

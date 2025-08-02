@@ -5,7 +5,8 @@ import de.hglabor.plugins.hungergames.game.GameManager
 import de.hglabor.plugins.hungergames.game.mechanics.Mechanic
 import de.hglabor.plugins.hungergames.game.phase.phases.PvPPhase
 import net.axay.kspigot.event.listen
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.event.block.BlockBreakEvent
 
@@ -17,13 +18,13 @@ val OreNerf by Mechanic("Ore Nerf") {
         if (it.block.type == Material.DIAMOND_ORE) {
             it.isCancelled = true
             it.block.type = Material.AIR
-            it.player.sendMessage("${Prefix}${Color.RED}You can't mine diamonds.")
+            it.player.sendMessage(Prefix.append(Component.text("You can't mine diamonds.", NamedTextColor.RED)))
         }
 
         if (it.block.type == Material.IRON_ORE) {
             if (GameManager.phase == PvPPhase && GameManager.elapsedTime.get() <= 180) {
                 it.isCancelled = true
-                it.player.sendMessage("${Prefix}${Color.RED}You can't mine iron yet. You may start 3 minutes after the PvPPhase has began.")
+                it.player.sendMessage(Prefix.append(Component.text("You can't mine iron yet. You may start 3 minutes after the PvPPhase has began.", NamedTextColor.RED)))
             }
         }
     }

@@ -6,7 +6,8 @@ import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
 import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
 import net.axay.kspigot.runnables.taskRunLater
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -22,7 +23,7 @@ class AnchorProperties : KitProperties() {
 
 val Anchor by Kit("Anchor", ::AnchorProperties) {
     displayMaterial = Material.ANVIL
-    description = "${Color.GRAY}You neither deal nor take knockback"
+    description = Component.text("You neither deal nor take knockback", NamedTextColor.GRAY).toString()
 
     fun slownessEffect() = PotionEffect(PotionEffectType.SLOWNESS, kit.properties.slownessDuration * 20, kit.properties.slownessAmplifier)
 

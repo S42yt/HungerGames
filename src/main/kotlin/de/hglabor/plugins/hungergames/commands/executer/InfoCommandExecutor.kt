@@ -5,7 +5,8 @@ import de.hglabor.plugins.hungergames.game.mechanics.implementation.arena.Arena
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.arena.ArenaMechanic
 import de.hglabor.plugins.hungergames.player.PlayerList
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -17,13 +18,13 @@ class InfoCommandExecutor : CommandExecutor {
         label: String,
         args: Array<out String>
     ): Boolean {
-        sender.sendMessage("${Color.RED}${TextDecoration.BOLD}${GameManager.phase.timeName}: ${Color.WHITE}${GameManager.phase.getTimeString()}")
-        sender.sendMessage("${Color.GREEN}${TextDecoration.BOLD}Players: ${Color.WHITE}${PlayerList.getShownPlayerCount()}")
+        sender.sendMessage(Component.text(GameManager.phase.timeName, NamedTextColor.RED, TextDecoration.BOLD).append(Component.text(": ", NamedTextColor.RED)).append(Component.text(GameManager.phase.getTimeString(), NamedTextColor.WHITE)))
+        sender.sendMessage(Component.text("Players: ", NamedTextColor.GREEN, TextDecoration.BOLD).append(Component.text(PlayerList.getShownPlayerCount(), NamedTextColor.WHITE)))
         if (ArenaMechanic.internal.isEnabled) {
-            sender.sendMessage("")
-            sender.sendMessage("${Color.RED}${TextDecoration.BOLD}Arena: ${Color.WHITE}${if (Arena.isOpen) "Open" else "Closed"}")
-            sender.sendMessage("${Color.RED}${TextDecoration.BOLD}Waiting: ${Color.WHITE}${Arena.queuedPlayers.size}")
-            sender.sendMessage("${Color.RED}${TextDecoration.BOLD}Fighting: ${Color.WHITE}${Arena.currentMatch?.players?.size ?: 0}")
+            sender.sendMessage(Component.empty())
+            sender.sendMessage(Component.text("Arena: ", NamedTextColor.RED, TextDecoration.BOLD).append(Component.text(if (Arena.isOpen) "Open" else "Closed", NamedTextColor.WHITE)))
+            sender.sendMessage(Component.text("Waiting: ", NamedTextColor.RED, TextDecoration.BOLD).append(Component.text(Arena.queuedPlayers.size, NamedTextColor.WHITE)))
+            sender.sendMessage(Component.text("Fighting: ", NamedTextColor.RED, TextDecoration.BOLD).append(Component.text(Arena.currentMatch?.players?.size ?: 0, NamedTextColor.WHITE)))
         }
         return true
     }

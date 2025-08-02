@@ -5,6 +5,7 @@ kotlinx-serialization = "1.6.2"
 paper = "1.21.1-R0.1-SNAPSHOT"
 shadow = "8.3.3"
 kmongo = "4.11.0"
+adventure = "4.24.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
@@ -13,6 +14,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
 kmongo-serialization = { module = "org.litote.kmongo:kmongo-serialization-mapping", version.ref = "kmongo" }
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

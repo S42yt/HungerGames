@@ -2,11 +2,11 @@ package de.hglabor.plugins.hungergames.staff
 
 import de.hglabor.plugins.hungergames.player.StaffPlayer
 import de.hglabor.plugins.hungergames.staff.module.implementation.*
-import net.axay.kspigot.chat.KColors
+import net.kyori.adventure.text.format.NamedTextColor
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.inventory.ItemStack
@@ -23,7 +23,7 @@ object StaffMode {
         Visibility
     )
 
-    val prefix = " ${KColors.DARKGRAY}| ${KColors.DARKPURPLE}Staff ${KColors.DARKGRAY}» ${KColors.GRAY}"
+    val prefix = Component.text("|", NamedTextColor.DARK_GRAY).append(Component.text(" Staff ", NamedTextColor.DARK_PURPLE)).append(Component.text("» ", NamedTextColor.DARK_GRAY)).append(Component.text("", NamedTextColor.GRAY))
 
     fun hide(staffPlayer: StaffPlayer) {
         val player = staffPlayer.bukkitPlayer ?: return
@@ -68,10 +68,25 @@ object StaffMode {
         }*/
 
         staffPlayer.board?.apply {
-            addLineBelow("${Color.PURPLE}${TextDecoration.BOLD}Staff:")
-            addLineBelow { "  ${Color.MAROON}${TextDecoration.BOLD}Visible:# ${if (staffPlayer.isVisible) "${Color.GREEN}Yes" else "${Color.RED}No"}" }
-            addLineBelow { "  ${Color.MAROON}${TextDecoration.BOLD}Build:# ${if (staffPlayer.isBuildMode) "${Color.GREEN}Yes" else "${Color.RED}No"}" }
-            addLineBelow { "  ${Color.MAROON}${TextDecoration.BOLD}Pick up:# ${if (staffPlayer.canCollectItems) "${Color.GREEN}Yes" else "${Color.RED}No"}" }
+            addLineBelow { Component.text("Staff:", NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD).toString() }
+            addLineBelow {
+                Component.text("  ", NamedTextColor.DARK_RED)
+                    .append(Component.text("Visible:# ", NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD))
+                    .append(if (staffPlayer.isVisible) Component.text("Yes", NamedTextColor.GREEN) else Component.text("No", NamedTextColor.RED))
+                    .toString()
+            }
+            addLineBelow {
+                Component.text("  ", NamedTextColor.DARK_RED)
+                    .append(Component.text("Build:# ", NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD))
+                    .append(if (staffPlayer.isBuildMode) Component.text("Yes", NamedTextColor.GREEN) else Component.text("No", NamedTextColor.RED))
+                    .toString()
+            }
+            addLineBelow {
+                Component.text("  ", NamedTextColor.DARK_RED)
+                    .append(Component.text("Pick up:# ", NamedTextColor.DARK_RED).decorate(TextDecoration.BOLD))
+                    .append(if (staffPlayer.canCollectItems) Component.text("Yes", NamedTextColor.GREEN) else Component.text("No", NamedTextColor.RED))
+                    .toString()
+            }
         }
     }
 
@@ -88,5 +103,5 @@ val ItemStack?.isStaffItem: Boolean
         if (type == Material.AIR) return false
         if (itemMeta == null) return false
         if (itemMeta.lore == null || itemMeta.lore?.isEmpty() == true) return false
-        return itemMeta.lore?.first() == "${Color.PURPLE}Staff Item"
+        return itemMeta.lore?.first() == Component.text("Staff Item", NamedTextColor.LIGHT_PURPLE).content()
     }

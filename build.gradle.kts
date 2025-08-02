@@ -37,6 +37,9 @@ dependencies {
     implementation(libs.kmongo)
     implementation(libs.kmongo.serialization)
 
+    // Kyori Adventure API
+    implementation(libs.adventure.api)
+
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.core)
     

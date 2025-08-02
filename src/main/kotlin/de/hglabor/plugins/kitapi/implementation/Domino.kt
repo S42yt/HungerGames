@@ -2,7 +2,7 @@ package de.hglabor.plugins.kitapi.implementation
 
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
-import org.bukkit.Color
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -16,7 +16,7 @@ class DominoProperties : KitProperties() {
 
 val Domino by Kit("Domino", ::DominoProperties) {
     displayMaterial = Material.QUARTZ_BLOCK
-    description = "${Color.GRAY}The ${Color.WHITE}damage and knockback ${Color.GRAY}you deal will be applied to all ${Color.WHITE}nearby entities"
+    description = MiniMessage.miniMessage().deserialize("<gray>Place a domino to teleport to it.<br>Can be used to escape or chase.</gray>").toString()
 
     kitPlayerEvent<EntityDamageByEntityEvent>(
         { it.damager as? Player },

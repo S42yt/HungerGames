@@ -14,7 +14,8 @@ import de.hglabor.plugins.kitapi.kit.KitManager
 import de.hglabor.plugins.kitapi.player.PlayerKits.chooseKit
 import net.axay.kspigot.gui.openGUI
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -29,17 +30,17 @@ class KitCommandExecutor : CommandExecutor {
     ): Boolean {
         val player = sender as? Player ?: return false
         if (RandomKits.internal.isEnabled) {
-            sender.sendMessage("${Prefix}${Color.RED}You can't choose a kit whilst ${TextDecoration.UNDERLINED}Random Kit${Color.RED} is enabled")
+            sender.sendMessage(Prefix.append(Component.text("You can't choose a kit whilst ", NamedTextColor.RED)).append(Component.text("Random Kit", NamedTextColor.RED).decorate(TextDecoration.UNDERLINED)).append(Component.text(" is enabled", NamedTextColor.RED)))
             return false
         }
         when (GameManager.phase) {
             PvPPhase, EndPhase -> {
-                sender.sendMessage("${Prefix}You can't choose a kit anymore.")
+                sender.sendMessage(Prefix.append(Component.text("You can't choose a kit anymore.", NamedTextColor.RED)))
                 return false
             }
             InvincibilityPhase -> {
                 if (player.hgPlayer.kit != None) {
-                    sender.sendMessage("${Prefix}You already have a kit.")
+                    sender.sendMessage(Prefix.append(Component.text("You already have a kit.", NamedTextColor.RED)))
                     return false
                 }
             }
@@ -47,20 +48,20 @@ class KitCommandExecutor : CommandExecutor {
 
         if (args.size != 1) {
             player.openGUI(KitSelector.gui)
-            sender.sendMessage("${Prefix}Please use ${Color.WHITE}/kit ${Color.GRAY}<${SecondaryColor}Kit${Color.GRAY}>.")
+            sender.sendMessage(Prefix.append(Component.text("Please use ")).append(Component.text("/kit ", NamedTextColor.WHITE)).append(Component.text("<", NamedTextColor.GRAY)).append(Component.text("Kit", NamedTextColor.GRAY)).append(Component.text(">.", NamedTextColor.GRAY)))
             return false
         }
 
         val kit = KitManager.kits.firstOrNull { it.properties.kitname.lowercase() == args[0].lowercase() }
         if (kit == null) {
-            sender.sendMessage("${Prefix}Please specify a kit.")
+            sender.sendMessage(Prefix.append(Component.text("Please specify a kit.")))
             return false
         }
 
         if (kit.properties.isEnabled)
             player.chooseKit(kit)
         else
-            player.sendMessage("${Prefix}This Kit is disabled.")
+            player.sendMessage(Prefix.append(Component.text("This Kit is disabled.")))
         return true
     }
 }

@@ -15,7 +15,8 @@ import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
 import net.axay.kspigot.runnables.taskRunLater
 import org.bukkit.Bukkit
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
@@ -38,8 +39,8 @@ private val whoMaged = mutableMapOf<UUID, UUID>()
 val Endermage by Kit("Endermage", ::EndermageProperties) {
     displayMaterial = Material.END_PORTAL_FRAME
     description {
-        +"${Color.WHITE}Place ${Color.GRAY}your kit-item to teleport other player to you"
-        +"${Color.GRAY}After teleporting you are invulnerable for 5 seconds"
+        +Component.text("Place ", NamedTextColor.WHITE).append(Component.text("your kit-item to teleport other player to you", NamedTextColor.GRAY))
+        +Component.text("After teleporting you are invulnerable for 5 seconds", NamedTextColor.GRAY)
     }
 
     val mageInstances = mutableMapOf<UUID, EndermageSearch>()
@@ -111,12 +112,12 @@ class EndermageSearch(mage: Player, val location: Location) {
                 player.teleport(location)
                 whoMaged[player.uniqueId] = mageUUID
                 player.mark("wasMaged")
-                player.sendMessage("${Prefix}You have been ${SecondaryColor}maged${Color.GRAY}! You are now ${Color.WHITE}invulnerable ${Color.GRAY}for ${Color.WHITE}5 seconds${Color.GRAY}.")
+                player.sendMessage(Prefix.append(Component.text("You have been ")).append(Component.text("maged", SecondaryColor)).append(Component.text("! You are now ", NamedTextColor.GRAY)).append(Component.text("invulnerable ", NamedTextColor.WHITE)).append(Component.text("for ", NamedTextColor.GRAY)).append(Component.text("5 seconds", NamedTextColor.WHITE)).append(Component.text(".", NamedTextColor.GRAY)))
 
                 taskRunLater(5*20) {
                     if (whoMaged[entity.uniqueId] == mageUUID) {
                         player.unmark("wasMaged")
-                        player.sendMessage("${Prefix}You are now vulnerable again.")
+                        player.sendMessage(Prefix.append(Component.text("You are now vulnerable again.")))
                     }
                 }
             }

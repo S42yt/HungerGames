@@ -1,6 +1,7 @@
 package de.hglabor.plugins.kitapi.kit
 
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -37,5 +38,5 @@ val ItemStack?.isKitItem: Boolean
         if (type == Material.AIR) return false
         if (itemMeta == null) return false
         if (itemMeta.lore == null || itemMeta.lore?.isEmpty() == true) return false
-        return itemMeta.lore?.first() == "${Color.PURPLE}Kititem"
+        return itemMeta.lore?.first() == Component.text("Kititem", NamedTextColor.LIGHT_PURPLE).content()
     }

@@ -6,6 +6,7 @@ import de.hglabor.plugins.hungergames.utils.ChanceUtils.roll
 import de.hglabor.plugins.kitapi.kit.Kit
 import de.hglabor.plugins.kitapi.kit.KitProperties
 import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -22,10 +23,7 @@ class CannibalProperties : KitProperties() {
 
 val Cannibal by Kit("Cannibal", ::CannibalProperties) {
     displayMaterial = Material.ROTTEN_FLESH
-    description {
-        +"${Color.WHITE}Hitting ${Color.GRAY}players feeds you."
-        +"${Color.WHITE}Hit ${Color.GRAY}players get hunger effect."
-    }
+    description = MiniMessage.miniMessage().deserialize("<gray>Hitting <white>players</white> feeds you.<br>Hit <white>players</white> get hunger effect.</gray>").toString()
 
     fun slownessEffect() = PotionEffect(PotionEffectType.HUNGER, kit.properties.hungerDuration * 20, kit.properties.hungerAmplifier)
 

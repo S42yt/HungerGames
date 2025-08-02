@@ -2,7 +2,8 @@ package de.hglabor.plugins.hungergames.commands.executer
 
 import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.game.mechanics.implementation.arena.ArenaWorld
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -18,7 +19,11 @@ class ArenaTpCommandExecutor : CommandExecutor {
     ): Boolean {
         val player = sender as? Player ?: return false
         if (!player.hasPermission("hglabor.admin")) {
-            sender.sendMessage("${Prefix}${Color.RED}You are not permitted to execute this command.")
+            player.sendMessage(
+                Prefix.append(
+                    Component.text("You are not permitted to execute this command.", NamedTextColor.RED)
+                )
+            )
             return false
         }
         player.teleport(Location(ArenaWorld.world, 0.0, 10.0, 0.0))

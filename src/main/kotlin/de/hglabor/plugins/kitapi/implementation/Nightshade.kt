@@ -14,7 +14,7 @@ import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.name
 import net.axay.kspigot.runnables.taskRunLater
 import net.kyori.adventure.text.Component
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -28,18 +28,18 @@ class NightshadeProperties  : CooldownProperties(20) {
 val Nightshade by Kit("Nightshade", ::NightshadeProperties) {
     displayMaterial = Material.NETHER_BRICK
     description {
-        +"${Color.WHITE}Right-click ${Color.GRAY}a player to:"
-        +" ${Color.GRAY}- ${Color.WHITE}Reduce their health ${Color.GRAY}for ${kit.properties.duration} seconds"
-        +" ${Color.GRAY}- ${Color.GRAY}Infect up to 2 soups"
-        +"${Color.GRAY}When ${Color.WHITE}presouping ${Color.GRAY}or eating an ${Color.WHITE}infected soup"
-        +"${Color.GRAY}They will receive ${Color.WHITE}wither effect"
+        +Component.text("Right-click ", NamedTextColor.WHITE).append(Component.text("a player to:", NamedTextColor.GRAY))
+        +Component.text(" - ", NamedTextColor.GRAY).append(Component.text("Reduce their health ", NamedTextColor.WHITE)).append(Component.text("for ${kit.properties.duration} seconds", NamedTextColor.GRAY))
+        +Component.text(" - ", NamedTextColor.GRAY).append(Component.text("Infect up to 2 soups", NamedTextColor.GRAY))
+        +Component.text("When ", NamedTextColor.GRAY).append(Component.text("presouping ", NamedTextColor.WHITE)).append(Component.text("or eating an ", NamedTextColor.GRAY)).append(Component.text("infected soup", NamedTextColor.WHITE))
+        +Component.text("They will receive ", NamedTextColor.GRAY).append(Component.text("wither effect", NamedTextColor.WHITE))
     }
 
     clickOnEntityItem(ItemStack(Material.NETHER_BRICK)) {
         val rightClicked = it.rightClicked as? Player ?: return@clickOnEntityItem
         applyCooldown(it) {
             if (rightClicked.hasMark("nightshadeHealth")) {
-                it.player.sendMessage("${Prefix}This player is already affected by nightshade")
+                it.player.sendMessage(Prefix.append(Component.text("This player is already affected by nightshade")))
                 cancelCooldown()
                 return@clickOnEntityItem
             }

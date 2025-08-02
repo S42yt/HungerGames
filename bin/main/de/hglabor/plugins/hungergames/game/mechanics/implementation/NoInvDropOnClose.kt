@@ -1,0 +1,70 @@
+package de.hglabor.plugins.hungergames.game.mechanics.implementation
+
+import de.hglabor.plugins.hungergames.game.mechanics.Mechanic
+import net.axay.kspigot.event.listen
+import net.axay.kspigot.items.setMeta
+import org.bukkit.Material
+import org.bukkit.event.EventPriority
+import org.bukkit.event.entity.ItemSpawnEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.persistence.PersistentDataType
+import org.bukkit.NamespacedKey
+import java.util.UUID
+
+val NoInvDropOnClose by Mechanic("No Inv Drop on Close") {
+    description = "Items won't be dropped when closing your inventory. Just like in newer versions!"
+    displayMaterial = Material.CHEST
+
+    val IS_DEL_MARKER = UUID.randomUUID().toString()
+    val MARKER_KEY = NamespacedKey("hungergames", "noinvdrop_marker")
+
+    mechanicEvent<InventoryCloseEvent>(EventPriority.LOWEST) { e ->
+        val cursorStack = e.view.cursor
+        if (cursorStack != null && cursorStack.itemMeta != null) {
+            e.player.inventory.addItem(cursorStack)
+            val meta = cursorStack.itemMeta
+            meta.persistentDataContainer.set(MARKER_KEY, PersistentDataType.STRING, IS_DEL_MARKER)
+            cursorStack.itemMeta = meta
+        }
+
+        val topInv = e.view.topInventory
+        fun processContents(indexToIgnore: Int) { // indexToIgnore is usually the output/result slot
+            topInv.contents.forEachIndexed { index, itemStack ->
+                if (itemStack == null || index == indexToIgnore)
+                    return@forEachIndexed
+
+                val toDrop = e.player.inventory.addItem(itemStack)
+                if (toDrop.isEmpty()) {
+                    val meta = itemStack.itemMeta ?: return@forEachIndexed
+                    meta.persistentDataContainer.set(MARKER_KEY, PersistentDataType.STRING, IS_DEL_MARKER)
+                    itemStack.itemMeta = meta
+                }
+            }
+        }
+
+        when (topInv.type) {
+            InventoryType.WORKBENCH, InventoryType.CRAFTING -> processContents(0)
+            InventoryType.ENCHANTING -> processContents(1) // lapis slot, because of "LapisInEnchanter"
+            InventoryType.ANVIL, InventoryType.MERCHANT -> processContents(2)
+            else -> Unit
+        }
+    }
+
+    listen<PlayerDropItemEvent> { e ->
+        if (!e.isCancelled) return@listen
+        val itemStackMeta = e.itemDrop.itemStack?.itemMeta ?: return@listen
+        if (itemStackMeta.persistentDataContainer.has(MARKER_KEY, PersistentDataType.STRING)) {
+            e.isCancelled = false
+        }
+    }
+
+    listen<ItemSpawnEvent> { e ->
+        val itemStackMeta = e.entity.itemStack?.itemMeta ?: return@listen
+        if (itemStackMeta.persistentDataContainer.has(MARKER_KEY, PersistentDataType.STRING)) {
+            e.isCancelled = true
+        }
+    }
+}

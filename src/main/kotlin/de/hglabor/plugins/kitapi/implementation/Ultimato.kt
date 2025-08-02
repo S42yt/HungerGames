@@ -14,6 +14,8 @@ import net.axay.kspigot.extensions.bukkit.spawnCleanEntity
 import net.axay.kspigot.extensions.geometry.add
 import net.axay.kspigot.runnables.KSpigotRunnable
 import net.axay.kspigot.runnables.task
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Color
 import org.bukkit.Effect
 import org.bukkit.Location
@@ -119,7 +121,7 @@ class UltimatoInstance(private val ultimato: Player) {
 
 val Ultimato by Kit("Ultimato", ::UltimatoProperties) {
     displayItem = ItemStack(Material.RED_STAINED_GLASS_PANE, 1)
-    description = "${Color.GRAY}Create an arena to fight nearby players"
+    description = Component.text("Create an arena to fight nearby players", NamedTextColor.GRAY).content()
 
     clickableItem(ItemStack(Material.RED_STAINED_GLASS_PANE, 1), useInInvincibility = false) {
         if (it.player.isInUltimato || it.player.isInGladiator) return@clickableItem
@@ -129,7 +131,7 @@ val Ultimato by Kit("Ultimato", ::UltimatoProperties) {
                 .filterNot { it.isInGladiator || it.isInUltimato }
                 .isEmpty()
         ) {
-            it.player.sendMessage("${Prefix}There are no Players nearby.")
+            it.player.sendMessage(Prefix.append(Component.text("There are no Players nearby.")))
             return@clickableItem
         }
         if (!hasCooldown(it.player)) {

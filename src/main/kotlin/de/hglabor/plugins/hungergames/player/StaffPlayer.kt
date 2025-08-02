@@ -1,7 +1,8 @@
 package de.hglabor.plugins.hungergames.player
 
 import de.hglabor.plugins.hungergames.staff.StaffMode
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.GameMode
 import java.util.*
 
@@ -13,12 +14,12 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
 
     fun toggleStaffMode() {
         if (isStaffMode) {
-            bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Staffmode ${Color.GRAY}» ${Color.GREEN}Restored staff inventory")
+            bukkitPlayer?.sendMessage(StaffMode.prefix.append(Component.text("Staffmode ", NamedTextColor.DARK_RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text("Restored staff inventory", NamedTextColor.GREEN)))
             StaffMode.setStaffInventory(this)
             return
         }
         isStaffMode = !isStaffMode
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Staffmode ${Color.GRAY}» ${isStaffMode.text}")
+        bukkitPlayer?.sendMessage(StaffMode.prefix.append(Component.text("Staffmode ", NamedTextColor.DARK_RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(isStaffMode.text))
         status = PlayerStatus.SPECTATOR
         bukkitPlayer?.gameMode = GameMode.CREATIVE
         StaffMode.setStaffInventory(this)
@@ -28,17 +29,17 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
 
     fun toggleBuildMode() {
         isBuildMode = !isBuildMode
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Buildmode ${Color.GRAY}» ${isBuildMode.text}")
+        bukkitPlayer?.sendMessage(StaffMode.prefix.append(Component.text("Buildmode ", NamedTextColor.DARK_RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(isBuildMode.text))
     }
 
     fun toggleCollectingItems() {
         canCollectItems = !canCollectItems
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Collecting Items ${Color.GRAY}» ${canCollectItems.text}")
+        bukkitPlayer?.sendMessage(StaffMode.prefix.append(Component.text("Collecting Items ", NamedTextColor.DARK_RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(canCollectItems.text))
     }
 
     fun toggleVisibility() {
         isVisible = !isVisible
-        bukkitPlayer?.sendMessage("${StaffMode.prefix}${Color.MAROON}Visibility ${Color.GRAY}» ${isVisible.text}")
+        bukkitPlayer?.sendMessage(StaffMode.prefix.append(Component.text("Visibility ", NamedTextColor.DARK_RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(isVisible.text))
 
         if (isVisible) StaffMode.show(this)
         else StaffMode.hide(this)
@@ -46,5 +47,5 @@ class StaffPlayer(uuid: UUID, name: String) : HGPlayer(uuid, name) {
     }
 
 
-    val Boolean.text get() = if (this) "${Color.GREEN}Enabled" else "${Color.RED}Disabled"
+    val Boolean.text get() = if (this) Component.text("Enabled", NamedTextColor.GREEN) else Component.text("Disabled", NamedTextColor.RED)
 }

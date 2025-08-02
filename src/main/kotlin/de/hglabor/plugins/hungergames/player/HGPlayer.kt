@@ -16,7 +16,7 @@ import net.axay.kspigot.extensions.bukkit.feedSaturate
 import net.axay.kspigot.extensions.geometry.add
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -48,7 +48,7 @@ open class HGPlayer(val uuid: UUID, val name: String) {
     var isKitByRogueDisabled: Boolean = false
     var wasInArena: Boolean = false
     val kitPrefix: String
-        get() = if(!kit.properties.isEnabled || isKitByRogueDisabled) "${TextDecoration.STRIKETHROUGH}" else ""
+        get() = if(!kit.properties.isEnabled || isKitByRogueDisabled) TextDecoration.STRIKETHROUGH.toString() else ""
 
     fun login() {
         OfflineTimer.stopTimer(this)
@@ -63,15 +63,21 @@ open class HGPlayer(val uuid: UUID, val name: String) {
         }
 
         board = player.setScoreboard {
-            this.title = LegacyComponentSerializer.legacySection().deserialize("&b&lHG&f&lLabor.de")
+            this.title = Component.text().content("HG").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+                .append(Component.text("Labor.de").color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD)).build()
             period = 20
             content {
-                +" "
-                +{ "&a&lPlayers: &f${PlayerList.getShownPlayerCount()} &7(${Arena.queuedPlayers.size + (Arena.currentMatch?.players?.size ?: 0)})" }
-                +{ "&b&lKit: &f${kitPrefix}${kit.properties.kitname}" }
-                +{ "&c&lKills: &f${kills.get()}" }
-                +{ "&e&l${GameManager.phase.timeName}: &f${GameManager.phase.getTimeString()}" }
-                +{ if (isInCombat) "&c&lIN COMBAT" else " " }
+                " "
+                { Component.text().content("Players: ").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)
+                    .append(Component.text("${PlayerList.getShownPlayerCount()} ").color(NamedTextColor.WHITE))
+                    .append(Component.text("(${Arena.queuedPlayers.size + (Arena.currentMatch?.players?.size ?: 0)})").color(NamedTextColor.GRAY)).build() }
+                { Component.text().content("Kit: ").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)
+                    .append(Component.text("${kitPrefix}${kit.properties.kitname}").color(NamedTextColor.WHITE)).build() }
+                { Component.text().content("Kills: ").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
+                    .append(Component.text("${kills.get()}").color(NamedTextColor.WHITE)).build() }
+                { Component.text().content("${GameManager.phase.timeName}: ").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)
+                    .append(Component.text(GameManager.phase.getTimeString()).color(NamedTextColor.WHITE)).build() }
+                { if (isInCombat) Component.text("IN COMBAT").color(NamedTextColor.RED).decorate(TextDecoration.BOLD) else Component.empty() }
             }
         }
     }

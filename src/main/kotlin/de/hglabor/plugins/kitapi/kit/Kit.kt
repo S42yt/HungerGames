@@ -11,8 +11,8 @@ import net.axay.kspigot.event.listen
 import net.axay.kspigot.items.meta
 import net.axay.kspigot.items.setLore
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit.spigot
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
@@ -58,7 +58,7 @@ open class Kit<P : KitProperties> private constructor(val key: String, val prope
     }
 
     inner class Internal internal constructor() {
-        var description: List<String>? = null
+        var description: String? = null
         val items = HashMap<Int, KitItem>()
         val kitPlayerEvents = HashSet<Listener>()
         var displayItem: ItemStack = ItemStack(Material.BARRIER)
@@ -68,8 +68,8 @@ open class Kit<P : KitProperties> private constructor(val key: String, val prope
             for (item in items.values) {
                 val kitItemStack = item.stack.apply {
                     val meta = itemMeta
-                    meta?.setDisplayName("${Color.PURPLE}${properties.kitname}")
-                    meta?.setLore(listOf("${Color.PURPLE}Kititem"))
+                    meta?.setDisplayName(Component.text(properties.kitname, NamedTextColor.LIGHT_PURPLE).content())
+                    meta?.setLore(listOf(Component.text("Kititem", NamedTextColor.LIGHT_PURPLE).content()))
                     meta?.isUnbreakable = true
                     meta?.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES)
                     itemMeta = meta
@@ -86,9 +86,19 @@ open class Kit<P : KitProperties> private constructor(val key: String, val prope
                     if (properties is MultipleUsesCooldownProperties) {
                         addLineBelow { " ${Color.GRAY}${Color.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
                     }*/
-                    addLineBelow { "${SecondaryColor}${TextDecoration.BOLD}Cooldown:#${Color.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
+                    addLineBelow {
+                        Component.text("  ", SecondaryColor as? NamedTextColor ?: NamedTextColor.GRAY)
+                            .append(Component.text("Cooldown:#").decorate(TextDecoration.BOLD))
+                            .append(Component.text(CooldownManager.getRemainingCooldown(properties.cooldownInstance, player), NamedTextColor.WHITE))
+                            .toString()
+                    }
                     if (properties is MultipleUsesCooldownProperties) {
-                        addLineBelow { "${Color.GRAY}${TextDecoration.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
+                        addLineBelow {
+                            Component.text("  ", NamedTextColor.GRAY)
+                                .append(Component.text("Uses:#").decorate(TextDecoration.BOLD))
+                                .append(Component.text("${properties.usesMap[player.uniqueId]}/${properties.uses}", NamedTextColor.WHITE))
+                                .toString()
+                        }
                     }
 
                     addLineBelow(" ")

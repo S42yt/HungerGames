@@ -8,9 +8,15 @@ import de.hglabor.plugins.hungergames.game.phase.GamePhase
 import de.hglabor.plugins.hungergames.player.HGPlayer
 import de.hglabor.plugins.hungergames.player.PlayerList
 import de.hglabor.plugins.hungergames.player.hgPlayer
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
+import de.hglabor.plugins.hungergames.Manager
 import net.axay.kspigot.extensions.onlinePlayers
-import org.bukkit.*
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Bukkit
+import org.bukkit.GameMode
+import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
@@ -49,9 +55,9 @@ object EndPhase : GamePhase(25, null) {
 
     override fun tick(tickCount: Int) {
         if (tickCount < 5) {
-            broadcast(
-                if (winner != null) "${Prefix}${SecondaryColor}${winner?.name} ${Color.GRAY}won"
-                else "${Prefix}${Color.RED}Nobody ${Color.GRAY}won."
+            Manager.audience.sendMessage(
+                if (winner != null) Prefix.append(Component.text(winner?.name ?: "", SecondaryColor)).append(Component.text(" won", NamedTextColor.GRAY))
+                else Prefix.append(Component.text("Nobody ", NamedTextColor.RED)).append(Component.text("won.", NamedTextColor.GRAY))
             )
         }
 

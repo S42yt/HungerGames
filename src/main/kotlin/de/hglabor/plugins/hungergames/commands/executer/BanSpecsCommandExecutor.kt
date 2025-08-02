@@ -1,7 +1,8 @@
 package de.hglabor.plugins.hungergames.commands.executer
 
 import de.hglabor.plugins.hungergames.Prefix
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -18,11 +19,19 @@ class BanSpecsCommandExecutor : CommandExecutor {
         args: Array<out String>
     ): Boolean {
         if (!sender.hasPermission("hglabor.hg.start")) {
-            sender.sendMessage("${Prefix}${Color.RED}You are not permitted to execute this command.")
+            sender.sendMessage(
+                Prefix.append(
+                    Component.text("You are not permitted to execute this command.", NamedTextColor.RED)
+                )
+            )
             return false
         }
         allowSpecs = !allowSpecs
-        sender.sendMessage("${Prefix}${Color.RED}Allow specs: $allowSpecs.")
+        sender.sendMessage(
+            Prefix.append(
+                Component.text("Allow specs: $allowSpecs.", NamedTextColor.RED)
+            )
+        )
         return true
     }
 }

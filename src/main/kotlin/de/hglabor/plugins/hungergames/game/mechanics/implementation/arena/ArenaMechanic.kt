@@ -5,9 +5,11 @@ import de.hglabor.plugins.hungergames.game.GameManager
 import de.hglabor.plugins.hungergames.game.mechanics.Mechanic
 import de.hglabor.plugins.hungergames.game.phase.phases.EndPhase
 import de.hglabor.plugins.hungergames.player.PlayerList
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
+import de.hglabor.plugins.hungergames.Manager
 import net.axay.kspigot.runnables.task
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -33,7 +35,7 @@ val ArenaMechanic by Mechanic("Arena") {
                         addItem(ItemStack(Material.MUSHROOM_STEW))
                     }
                 }
-                broadcast("${Arena.Prefix}${Color.WHITE}${revived.name} ${Color.GRAY}was revived.")
+                Manager.audience.sendMessage(Arena.Prefix.append(Component.text(revived.name, NamedTextColor.WHITE)).append(Component.text(" was revived.", NamedTextColor.GRAY)))
             }
 
             if (Arena.currentMatch?.isEnded == false) {

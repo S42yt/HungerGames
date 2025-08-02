@@ -13,11 +13,17 @@ import de.hglabor.plugins.hungergames.commands.command.StaffCommand
 import de.hglabor.plugins.hungergames.player.OffhandBlocker
 import net.axay.kspigot.extensions.bukkit.register
 import net.axay.kspigot.main.KSpigot
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.WorldCreator
 import java.io.File
 
 class HungerGames : KSpigot() {
+    val audience: Audience by lazy { server }
+
     companion object {
         lateinit var INSTANCE: HungerGames; private set
     }
@@ -37,7 +43,6 @@ class HungerGames : KSpigot() {
     }
 
     override fun shutdown() {
-
     }
 
     private fun registerListeners() {
@@ -55,6 +60,6 @@ class HungerGames : KSpigot() {
 }
 
 val Manager by lazy { HungerGames.INSTANCE }
-val PrimaryColor = Color.PURPLE
-val SecondaryColor = Color.MAROON
-val Prefix = " ${Color.GRAY}| ${PrimaryColor}HGLabor ${Color.GRAY}» ${Color.SILVER}"
+val PrimaryColor: NamedTextColor = NamedTextColor.LIGHT_PURPLE
+val SecondaryColor: NamedTextColor = NamedTextColor.DARK_RED
+val Prefix: Component = Component.text(" ").append(Component.text("|", NamedTextColor.GRAY)).append(Component.text(" HGLabor ", PrimaryColor)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text("", NamedTextColor.WHITE))

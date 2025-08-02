@@ -7,14 +7,17 @@ import de.hglabor.plugins.hungergames.player.PlayerStatus
 import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.hungergames.scoreboard.setScoreboard
 import de.hglabor.plugins.hungergames.utils.TimeConverter
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
+import de.hglabor.plugins.hungergames.Manager
 import net.kyori.adventure.text.format.TextDecoration
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.Color
+
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 
 object Arena {
-    val Prefix = " &7| &cArena &7» &f"
+    val Prefix: Component = Component.text("|", NamedTextColor.GRAY).append(Component.text(" Arena ", NamedTextColor.RED)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text("", NamedTextColor.WHITE))
     var isOpen = true
     val queuedPlayers = mutableListOf<HGPlayer>()
     var currentMatch: ArenaMatch? = null
@@ -28,7 +31,7 @@ object Arena {
         player.inventory.clear()
 
         player.setScoreboard {
-            this.title = LegacyComponentSerializer.legacySection().deserialize("&b&lHG&f&lLabor.de")
+            this.title = Component.text("HG", NamedTextColor.AQUA, TextDecoration.BOLD).append(Component.text("Labor.de", NamedTextColor.WHITE, TextDecoration.BOLD))
             period = 20
             content {
                 fun fightDuration(): String {
@@ -37,14 +40,14 @@ object Arena {
                     if (timer >= 0) return TimeConverter.stringify(ArenaMatch.MAX_DURATION - timer)
                     return TimeConverter.stringify(ArenaMatch.MAX_DURATION)
                 }
-                +" "
-                +{ "&a&lPlayers: &f${PlayerList.getShownPlayerCount()}" }
-                +{ "&e&l${GameManager.phase.timeName}: &f${GameManager.phase.getTimeString()}" }
-                +"&7&m          &7&m          "
-                +{ "&b&lWaiting: &f${queuedPlayers.size}" }
-                +{ "&c&lFighting: &f${fightDuration()}" }
-                +{ "  &7-&f${(currentMatch?.players?.firstOrNull()?.name ?: "None").take(15)}" }
-                +{ "  &7-&f${(currentMatch?.players?.lastOrNull()?.name ?: "None").take(15)}" }
+                " "
+                { PlainTextComponentSerializer.plainText().serialize(Component.text("Players: ", NamedTextColor.GREEN, TextDecoration.BOLD).append(Component.text(PlayerList.getShownPlayerCount(), NamedTextColor.WHITE))) }
+                { PlainTextComponentSerializer.plainText().serialize(Component.text(GameManager.phase.timeName, NamedTextColor.YELLOW, TextDecoration.BOLD).append(Component.text(": ", NamedTextColor.YELLOW)).append(Component.text(GameManager.phase.getTimeString(), NamedTextColor.WHITE))) }
+                "&7&m          &7&m          "
+                { PlainTextComponentSerializer.plainText().serialize(Component.text("Waiting: ", NamedTextColor.AQUA, TextDecoration.BOLD).append(Component.text(queuedPlayers.size, NamedTextColor.WHITE))) }
+                { PlainTextComponentSerializer.plainText().serialize(Component.text("Fighting: ", NamedTextColor.RED, TextDecoration.BOLD).append(Component.text(fightDuration(), NamedTextColor.WHITE))) }
+                { PlainTextComponentSerializer.plainText().serialize(Component.text("  -", NamedTextColor.GRAY).append(Component.text((currentMatch?.players?.firstOrNull()?.name ?: "None").take(15), NamedTextColor.WHITE))) }
+                { PlainTextComponentSerializer.plainText().serialize(Component.text("  -", NamedTextColor.GRAY).append(Component.text((currentMatch?.players?.lastOrNull()?.name ?: "None").take(15), NamedTextColor.WHITE))) }
                 +" "
             }
         }
@@ -63,6 +66,6 @@ object Arena {
 
     fun close() {
         isOpen = false
-        broadcast("$Prefix${Color.RED}${TextDecoration.BOLD}The Arena has been closed!")
+        Manager.audience.sendMessage(Prefix.append(Component.text("The Arena has been closed!", NamedTextColor.RED, TextDecoration.BOLD)))
     }
 }

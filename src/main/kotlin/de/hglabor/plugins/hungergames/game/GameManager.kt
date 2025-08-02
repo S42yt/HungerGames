@@ -11,14 +11,14 @@ import de.hglabor.plugins.hungergames.game.phase.phases.PvPPhase
 import de.hglabor.plugins.hungergames.player.hgPlayer
 import de.hglabor.plugins.hungergames.utils.TimeConverter
 import net.axay.kspigot.event.listen
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
 import net.axay.kspigot.extensions.onlinePlayers
 import net.axay.kspigot.runnables.sync
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Difficulty
 import org.bukkit.entity.EntityType
 import org.bukkit.event.HandlerList
@@ -77,24 +77,24 @@ object GameManager {
     }
 
     private fun phaseBroadcasts() {
-        val remaining = "${Color.WHITE}${TimeConverter.stringify(phase.remainingTime.toInt())}${Color.GRAY}"
+        val remaining = Component.text(TimeConverter.stringify(phase.remainingTime.toInt()), NamedTextColor.WHITE)
         when (phase) {
             LobbyPhase -> {
                 when (LobbyPhase.remainingTime.toInt()) {
-                    60, 30, 20, 10, 3, 2, 1 -> broadcast("${Prefix}The HungerGames are starting in ${remaining}.")
-                    0 -> onlinePlayers.forEach { it.showTitle(Title.title(Component.text("${SecondaryColor}gl hf"), Component.empty(), Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(3500), Duration.ofMillis(1000)))) }
+                    60, 30, 20, 10, 3, 2, 1 -> Manager.audience.sendMessage(Prefix.append(Component.text("The HungerGames are starting in ")).append(remaining).append(Component.text(".")))
+                    0 -> onlinePlayers.forEach { it.showTitle(Title.title(Component.text("gl hf", NamedTextColor.DARK_RED), Component.empty(), Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(3500), Duration.ofMillis(1000)))) }
                 }
             }
 
             InvincibilityPhase -> {
                 when (InvincibilityPhase.remainingTime.toInt()) {
-                    60, 30, 20, 10, 3, 2, 1 -> broadcast("${Prefix}The invincibility period ends in ${remaining}.")
+                    60, 30, 20, 10, 3, 2, 1 -> Manager.audience.sendMessage(Prefix.append(Component.text("The invincibility period ends in ")).append(remaining).append(Component.text(".")))
                 }
             }
 
             PvPPhase -> {
                 when (PvPPhase.remainingTime.toInt()) {
-                    60, 30, 20, 10, 3, 2, 1 -> broadcast("${Prefix}The player with the most eliminations wins in ${remaining}.")
+                    60, 30, 20, 10, 3, 2, 1 -> Manager.audience.sendMessage(Prefix.append(Component.text("The player with the most eliminations wins in ")).append(remaining).append(Component.text(".")))
                 }
             }
         }

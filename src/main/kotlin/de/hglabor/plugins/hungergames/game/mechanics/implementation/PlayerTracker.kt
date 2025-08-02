@@ -4,7 +4,8 @@ import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.SecondaryColor
 import de.hglabor.plugins.hungergames.player.hgPlayer
 import net.axay.kspigot.event.listen
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -18,10 +19,10 @@ object PlayerTracker {
             val target = findTarget(player)
 
             if (target == null) {
-                player.sendMessage("${Prefix}${Color.RED}No target found.")
+                player.sendMessage(Prefix.append(Component.text("No target found.", NamedTextColor.RED)))
                 return@listen
             }
-            player.sendMessage("${Prefix}You compass is pointing at ${SecondaryColor}${target.name}${Color.GRAY}.")
+            player.sendMessage(Prefix.append(Component.text("You compass is pointing at ")).append(Component.text(target.name, SecondaryColor)).append(Component.text(".", NamedTextColor.GRAY)))
             player.compassTarget = target.location
         }
     }

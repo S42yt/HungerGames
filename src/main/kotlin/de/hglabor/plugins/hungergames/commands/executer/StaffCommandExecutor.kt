@@ -4,7 +4,8 @@ import de.hglabor.plugins.hungergames.Prefix
 import de.hglabor.plugins.hungergames.player.staffPlayer
 import de.hglabor.plugins.hungergames.staff.StaffMode
 import de.hglabor.plugins.hungergames.staff.module.command.IStaffCommand
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -19,7 +20,7 @@ class StaffCommandExecutor : CommandExecutor {
     ): Boolean {
         val player = sender as? Player ?: return false
         if (!player.hasPermission("hglabor.staff")) {
-            sender.sendMessage("${Prefix}${Color.RED}You are not permitted to execute this command.")
+            sender.sendMessage(Prefix.append(Component.text("You are not permitted to execute this command.", NamedTextColor.RED)))
             return false
         }
 
@@ -34,7 +35,7 @@ class StaffCommandExecutor : CommandExecutor {
                     .firstOrNull { it.command.name == args[0].lowercase() } ?: return@moduleCommands
 
                 if (!shouldExecute(player)) {
-                    player.sendMessage("${StaffMode.prefix}${Color.RED}Please enable StaffMode first.")
+                    player.sendMessage(StaffMode.prefix.append(Component.text("Please enable StaffMode first.", NamedTextColor.RED)))
                     return false
                 }
 

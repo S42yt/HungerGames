@@ -17,14 +17,15 @@ import de.hglabor.plugins.hungergames.utils.TimeConverter
 import de.hglabor.plugins.kitapi.implementation.None
 import de.hglabor.plugins.kitapi.kit.KitManager
 import de.hglabor.plugins.kitapi.player.PlayerKits.chooseKit
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
+import de.hglabor.plugins.hungergames.Manager
 import net.axay.kspigot.extensions.onlinePlayers
 import net.axay.kspigot.runnables.async
 import net.axay.kspigot.runnables.sync
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -41,7 +42,7 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
             if (hgPlayer.kit == None && !hgPlayer.changedKitBefore) {
                 val kit = KitManager.kits.filter { it.properties.isEnabled }.random()
                 player?.chooseKit(kit, false)
-                player?.sendMessage("${Prefix}You have been given the kit $SecondaryColor${kit.properties.kitname}${Color.GRAY}.")
+                player?.sendMessage(Prefix.append(Component.text("You have been given the kit ")).append(Component.text(kit.properties.kitname, SecondaryColor)).append(Component.text(".", NamedTextColor.GRAY)))
             }
         }
     }
@@ -58,7 +59,13 @@ object PvPPhase : IngamePhase(3600, EndPhase) {
         fun handleBorderShrink() {
             // Bordershrink - 20 min vor ende
             if (remainingTime.toInt() == 20 * 60) {
-                broadcast("${Prefix}${Color.WHITE}${TextDecoration.BOLD}The border starts shrinking now.")
+                Manager.audience.sendMessage(
+                    Prefix.append(
+                        Component.text("The border starts shrinking now.")
+                            .color(NamedTextColor.WHITE)
+                            .decorate(TextDecoration.BOLD)
+                    )
+                )
                 GameManager.world?.worldBorder?.setSize(25.0 * 2, 10 * 60)
             }
         }

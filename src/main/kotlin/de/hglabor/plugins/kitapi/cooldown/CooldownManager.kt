@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
+import net.kyori.adventure.text.Component
 import java.util.*
 
 object CooldownManager {
@@ -30,7 +31,7 @@ object CooldownManager {
                 properties.usesMap[player.uniqueId]?.set(properties.uses)
             }
 
-            player.sendMessage("${Prefix}Your cooldown has expired.")
+            player.sendMessage(Prefix.append(Component.text("Your cooldown has expired.")))
         }
     }
 

@@ -6,7 +6,7 @@ import de.hglabor.plugins.hungergames.player.hgPlayer
 import net.axay.kspigot.event.listen
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Effect
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -27,7 +27,7 @@ val MushroomCowNerf by Mechanic("Mushroom Cow Nerf") {
     mechanicEvent<EntitySpawnEvent> {
         if (it.entity.type != EntityType.MOOSHROOM) return@mechanicEvent
         it.entity.isCustomNameVisible = false
-        it.entity.customName(Component.text("${SecondaryColor}${TextDecoration.BOLD}$SOUPS_PER_COW"))
+        it.entity.customName(Component.text(SOUPS_PER_COW.toString(), NamedTextColor.DARK_RED, TextDecoration.BOLD))
     }
 
     mechanicPlayerEvent<PlayerInteractEntityEvent> { it, player ->
@@ -48,7 +48,7 @@ val MushroomCowNerf by Mechanic("Mushroom Cow Nerf") {
             loc.world.playSound(loc, Sound.ENTITY_SHEEP_SHEAR, 3f, 1f)
             return@mechanicPlayerEvent
         }
-        rightClicked.customName(Component.text("${SecondaryColor}${TextDecoration.BOLD}${SOUPS_PER_COW - amountMilked}"))
+        rightClicked.customName(Component.text((SOUPS_PER_COW - amountMilked).toString(), NamedTextColor.DARK_RED, TextDecoration.BOLD))
         cows[rightClicked.uniqueId] = amountMilked
 
     }

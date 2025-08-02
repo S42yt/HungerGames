@@ -24,6 +24,8 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 
 open class IngamePhase(maxDuration: Long, nextPhase: GamePhase) : GamePhase(maxDuration, nextPhase) {
     override fun getTimeString(): String = ""
@@ -76,12 +78,16 @@ open class IngamePhase(maxDuration: Long, nextPhase: GamePhase) : GamePhase(maxD
             if (hgPlayer.status == PlayerStatus.LOBBY) {
                 hgPlayer.login()
                 hgPlayer.makeGameReady()
-                player.sendMessage("${Prefix}Hurry up! The game just started.")
+                player.sendMessage(Prefix.append(
+                    Component.text("Hurry up! The game just started.", NamedTextColor.YELLOW)
+                ))
             }
         } else if (GameManager.phase == PvPPhase) {
             if (hgPlayer.status == PlayerStatus.LOBBY) {
                 hgPlayer.status = PlayerStatus.SPECTATOR
-                player.sendMessage("${Prefix}You are too late, the game has already started.")
+                player.sendMessage(Prefix.append(
+                    Component.text("You are too late, the game has already started.", NamedTextColor.RED)
+                ))
                 player.gameMode = GameMode.SPECTATOR
             }
         }
@@ -107,4 +113,3 @@ open class IngamePhase(maxDuration: Long, nextPhase: GamePhase) : GamePhase(maxD
         entity.hgPlayer.combatTimer.set(12)
     }
 }
-

@@ -1,0 +1,9 @@
+name: HungerGames
+main: de.hglabor.plugins.hungergames.HungerGames
+version: 1.21_v1
+description: HungerGames Plugin
+author: BestAuto
+api-version: 1.21
+softdepend:
+  - WorldEdit
+load: POSTWORLD

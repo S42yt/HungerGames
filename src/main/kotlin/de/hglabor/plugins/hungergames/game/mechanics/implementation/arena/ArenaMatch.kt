@@ -10,11 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import net.axay.kspigot.event.SingleListener
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.event.unregister
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
+import de.hglabor.plugins.hungergames.Manager
 import net.axay.kspigot.extensions.bukkit.*
 import net.axay.kspigot.extensions.geometry.add
 import net.kyori.adventure.text.Component
-import org.bukkit.Color
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -36,7 +37,7 @@ class ArenaMatch(vararg val players: HGPlayer) {
 
     fun start() {
         registerListeners()
-        broadcast("${Arena.Prefix}Starting a fight between ${players.joinToString(" ${Color.GRAY}and ") { "${Color.WHITE}${it.name}" }}${Color.GRAY}.")
+        Manager.audience.sendMessage(Arena.Prefix.append(Component.text("Starting a fight between ")).append(players.map { Component.text(it.name, NamedTextColor.WHITE) }.reduce { acc, component -> acc.append(Component.text(" and ", NamedTextColor.GRAY)).append(component) }).append(Component.text(".", NamedTextColor.GRAY)))
         players.forEachIndexed { index, hgPlayer ->
             hgPlayer.bukkitPlayer?.let { player ->
                 val loc = if (index == 1) ArenaWorld.spawn1Location else ArenaWorld.spawn2Location
@@ -64,10 +65,10 @@ class ArenaMatch(vararg val players: HGPlayer) {
         players.forEach { fighting ->
             fighting.bukkitPlayer?.title(
                 when (timer.get()) {
-                    -3 -> Component.text("${Color.RED}3")
-                    -2 -> Component.text("${Color.YELLOW}2")
-                    -1 -> Component.text("${Color.GREEN}1") // DARK_GREEN ersetzt durch GREEN
-                    0 -> Component.text("${Color.GREEN}Go!")
+                    -3 -> Component.text("3", NamedTextColor.RED)
+                    -2 -> Component.text("2", NamedTextColor.YELLOW)
+                    -1 -> Component.text("1", NamedTextColor.GREEN)
+                    0 -> Component.text("Go!", NamedTextColor.GREEN)
                     else -> Component.text(" ")
                 }
             )
@@ -105,11 +106,7 @@ class ArenaMatch(vararg val players: HGPlayer) {
             // loser.teleport(GameManager.world.spawnLocation.clone().add(0, 10, 0))
             GameManager.world?.spawnLocation?.clone()?.add(0, 10, 0)?.let { loser.teleport(it) }
         } else {
-            broadcast(
-                "${Arena.Prefix}Current fight ${Color.RED}timed out${Color.GRAY}. Eliminating both, ${
-                    players.joinToString(" ${Color.GRAY}and ") { "${Color.WHITE}${it.name}" }
-                }${Color.GRAY}."
-            )
+            Manager.audience.sendMessage(Arena.Prefix.append(Component.text("Current fight ", NamedTextColor.RED)).append(Component.text("timed out", NamedTextColor.RED)).append(Component.text(". Eliminating both, ", NamedTextColor.GRAY)).append(players.map { Component.text(it.name, NamedTextColor.WHITE) }.reduce { acc, component -> acc.append(Component.text(" and ", NamedTextColor.GRAY)).append(component) }).append(Component.text(".", NamedTextColor.GRAY)))
             players.forEach { fighting ->
                 fighting.bukkitPlayer?.inventory?.clear()
                 fighting.bukkitPlayer?.gameMode = GameMode.SPECTATOR

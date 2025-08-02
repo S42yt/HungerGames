@@ -35,16 +35,16 @@ class KitBuilder<P : KitProperties>(val kit: Kit<P>) {
     var displayMaterial: Material
         get() = kit.internal.displayItem.type
         set(value) {
-            kit.internal.displayItem.type = if (value.isItem) value else Material.BARRIER
+            kit.internal.displayItem.type = value
         }
 
     fun description(callback: ItemMetaLoreBuilder.() -> Unit) {
-        kit.internal.description = ItemMetaLoreBuilder().apply(callback).lorelist.map { it.toString() }
+        kit.internal.description = ItemMetaLoreBuilder().apply(callback).lorelist.joinToString("\n") { it.toString() }
     }
 
     var description: String
-        get() = ""
-        set(value) { kit.internal.description = value.toLoreList().map { it.toString() } }
+        get() = kit.internal.description ?: ""
+        set(value) { kit.internal.description = value.toLoreList().joinToString("\n") { it.toString() } }
 
     fun simpleItem(stack: ItemStack) {
         kit.internal.items[currentItemId++] = SimpleKitItem(stack)

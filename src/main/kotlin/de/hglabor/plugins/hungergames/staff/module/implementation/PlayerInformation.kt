@@ -10,7 +10,7 @@ import net.axay.kspigot.items.name
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.Color
+ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -30,12 +30,12 @@ object PlayerInformation : InteractWithPlayerModule(), IStaffCommand {
     private fun sendInformation(staff: Player, target: Player?) {
         if (target == null) return
         val hgPlayer = target.hgPlayer
-        staff.sendMessage("${Color.GRAY}${TextDecoration.STRIKETHROUGH}             ${Color.GRAY}| ${Color.PURPLE}Staff ${Color.GRAY}|${Color.PURPLE}             ")
-        staff.sendMessage(" ${Color.GRAY}| ${Color.SILVER}Information about ${Color.MAROON}${target.name}")
-        staff.sendMessage("   ${Color.GRAY}• ${Color.SILVER}Kills ${Color.GRAY}» ${Color.MAROON}${hgPlayer.kills}")
-        staff.sendMessage("   ${Color.GRAY}• ${Color.SILVER}Remaining offline time ${Color.GRAY}» ${Color.MAROON}${hgPlayer.offlineTime.get()} seconds")
-        staff.sendMessage("   ${Color.GRAY}• ${Color.SILVER}Was in Arena ${Color.GRAY}» ${Color.MAROON}${hgPlayer.wasInArena}")
-        staff.sendMessage("${Color.GRAY}${TextDecoration.STRIKETHROUGH}                                    ")
+        staff.sendMessage(Component.text("             ", NamedTextColor.GRAY, TextDecoration.STRIKETHROUGH).append(Component.text("| ", NamedTextColor.GRAY)).append(Component.text("Staff ", NamedTextColor.LIGHT_PURPLE)).append(Component.text("|", NamedTextColor.GRAY)).append(Component.text("             ", NamedTextColor.LIGHT_PURPLE, TextDecoration.STRIKETHROUGH)))
+        staff.sendMessage(Component.text(" | ", NamedTextColor.GRAY).append(Component.text("Information about ", NamedTextColor.GRAY)).append(Component.text(target.name, NamedTextColor.DARK_RED)))
+        staff.sendMessage(Component.text("   • ", NamedTextColor.GRAY).append(Component.text("Kills ", NamedTextColor.GRAY)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text(hgPlayer.kills.toString(), NamedTextColor.DARK_RED)))
+        staff.sendMessage(Component.text("   • ", NamedTextColor.GRAY).append(Component.text("Remaining offline time ", NamedTextColor.GRAY)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text("${hgPlayer.offlineTime.get()} seconds", NamedTextColor.DARK_RED)))
+        staff.sendMessage(Component.text("   • ", NamedTextColor.GRAY).append(Component.text("Was in Arena ", NamedTextColor.GRAY)).append(Component.text("» ", NamedTextColor.GRAY)).append(Component.text(hgPlayer.wasInArena.toString(), NamedTextColor.DARK_RED)))
+        staff.sendMessage(Component.text("                                    ", NamedTextColor.GRAY, TextDecoration.STRIKETHROUGH))
     }
 
     override val command = staffCommand("info") { sender, args ->
@@ -43,7 +43,7 @@ object PlayerInformation : InteractWithPlayerModule(), IStaffCommand {
         val target = Bukkit.getPlayer(targetName)
 
         if (target == null) {
-            sender.sendMessage("${StaffMode.prefix}${Color.RED}This player is not online.")
+            sender.sendMessage(StaffMode.prefix.append(Component.text("This player is not online.", NamedTextColor.RED)))
             return@staffCommand
         }
 

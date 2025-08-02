@@ -1,0 +1,115 @@
+package de.hglabor.plugins.kitapi.kit
+
+import de.hglabor.plugins.hungergames.SecondaryColor
+import de.hglabor.plugins.hungergames.event.KitEnableEvent
+import de.hglabor.plugins.hungergames.player.hgPlayer
+import de.hglabor.plugins.kitapi.cooldown.CooldownManager
+import de.hglabor.plugins.kitapi.cooldown.CooldownProperties
+import de.hglabor.plugins.kitapi.cooldown.MultipleUsesCooldownProperties
+import de.hglabor.plugins.kitapi.player.PlayerKits.hasKit
+import net.axay.kspigot.event.listen
+import net.axay.kspigot.items.meta
+import net.axay.kspigot.items.setLore
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit.spigot
+import org.bukkit.Color
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.Listener
+import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.ItemStack
+import java.util.concurrent.atomic.AtomicInteger
+
+open class Kit<P : KitProperties> private constructor(val key: String, val properties: P) {
+
+    companion object {
+        /**
+         * Do not use this function, it is only there to expose
+         * the private constructor publicly for inlining from a safe
+         * place.
+         */
+        fun <P : KitProperties> createRawKit(key: String, properties: P) =
+            Kit(key, properties)
+
+        /**
+         * Creates a new lazy kit delegate.
+         *
+         * Usage:
+         * ```kt
+         * val MyKit by Kit("MyKit", ::MyKitProperties) { }
+         * // or for instant access
+         * val MyKit by Kit("MyKit", ::MyKitProperties) { }
+         * ```
+         *
+         * @param key the unique key of this kit
+         * @param properties the properties callback, for creating a properties instance
+         * for this kit
+         * @param builder the [KitBuilder]
+         */
+        inline operator fun <P : KitProperties> invoke(
+            key: Any,
+            crossinline properties: () -> P,
+            crossinline builder: KitBuilder<P>.() -> Unit,
+        ) = lazy {
+            createRawKit(key.toString(), properties.invoke()).apply {
+                KitBuilder(this).apply(builder)
+            }
+        }
+    }
+
+    inner class Internal internal constructor() {
+        var description: List<String>? = null
+        val items = HashMap<Int, KitItem>()
+        val kitPlayerEvents = HashSet<Listener>()
+        var displayItem: ItemStack = ItemStack(Material.BARRIER)
+
+        fun givePlayer(player: Player) {
+            player.hgPlayer.enableKit()
+            for (item in items.values) {
+                val kitItemStack = item.stack.apply {
+                    val meta = itemMeta
+                    meta?.setDisplayName("${Color.PURPLE}${properties.kitname}")
+                    meta?.setLore(listOf("${Color.PURPLE}Kititem"))
+                    meta?.isUnbreakable = true
+                    meta?.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES)
+                    itemMeta = meta
+                }
+                if (!player.inventory.contains(kitItemStack))
+                    player.inventory.addItem(kitItemStack)
+            }
+            val board = player.hgPlayer.board ?: return
+            if (properties is CooldownProperties) {
+                board.apply {
+                    // Todo multiple kits
+                    /*addLineBelow("$PrimaryColor${Color.BOLD}${properties.kitname}")
+                    addLineBelow { " ${SecondaryColor}${Color.BOLD}Cooldown:#${Color.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
+                    if (properties is MultipleUsesCooldownProperties) {
+                        addLineBelow { " ${Color.GRAY}${Color.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
+                    }*/
+                    addLineBelow { "${SecondaryColor}${TextDecoration.BOLD}Cooldown:#${Color.WHITE}${CooldownManager.getRemainingCooldown(properties.cooldownInstance, player)}" }
+                    if (properties is MultipleUsesCooldownProperties) {
+                        addLineBelow { "${Color.GRAY}${TextDecoration.BOLD}Uses:#${Color.WHITE}${properties.usesMap[player.uniqueId]}/${properties.uses}" }
+                    }
+
+                    addLineBelow(" ")
+                }
+            }
+        }
+    }
+
+    val internal = this.Internal()
+
+    init {
+        properties.kitname = key
+
+        if (properties is MultipleUsesCooldownProperties) {
+            internal.kitPlayerEvents += listen<KitEnableEvent> {
+                if (!it.player.hgPlayer.isAlive) return@listen
+                if (!it.player.hasKit(this)) return@listen
+                if (!properties.usesMap.contains(it.player.uniqueId)) {
+                    properties.usesMap[it.player.uniqueId] = AtomicInteger(properties.uses)
+                }
+            }
+        }
+    }
+}

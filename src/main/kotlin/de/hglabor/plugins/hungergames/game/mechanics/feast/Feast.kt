@@ -8,11 +8,12 @@ import de.hglabor.plugins.hungergames.utils.BlockQueue
 import de.hglabor.plugins.hungergames.utils.RandomCollection
 import de.hglabor.plugins.hungergames.utils.TimeConverter
 import de.hglabor.plugins.hungergames.utils.WorldUtils
-import net.axay.kspigot.extensions.broadcast
+import de.hglabor.plugins.hungergames.HungerGames
 import net.axay.kspigot.runnables.sync
 import net.axay.kspigot.runnables.task
 import org.bukkit.Bukkit
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -168,17 +169,23 @@ class Feast(val world: World) : Listener {
     }
 
     private fun announceFeast() {
-        broadcast("${Prefix}Feast will spawn at ${getCenterString()} ${Color.SILVER}in ${getTimeString()}${Color.SILVER}.")
+        Manager.audience.sendMessage(
+            Prefix.append(Component.text("Feast will spawn at "))
+                .append(getCenterString())
+                .append(Component.text(" in ", NamedTextColor.GRAY))
+                .append(getTimeString())
+                .append(Component.text("."))
+        )
     }
 
-    private fun getCenterString(): String? {
-        val loc = feastCenter ?: return null
-        return "${SecondaryColor}${loc.blockX}${Color.GRAY}, ${SecondaryColor}${loc.blockY}${Color.GRAY}, ${SecondaryColor}${loc.blockZ}${Color.GRAY}"
+    private fun getCenterString(): Component {
+        val loc = feastCenter ?: return Component.empty()
+        return Component.text(loc.blockX, SecondaryColor).append(Component.text(", ", NamedTextColor.GRAY)).append(Component.text(loc.blockY, SecondaryColor)).append(Component.text(", ", NamedTextColor.GRAY)).append(Component.text(loc.blockZ, SecondaryColor))
     }
 
-    private fun getTimeString(): String {
+    private fun getTimeString(): Component {
         val time = timer.get()
-        return "${Color.WHITE}${TimeConverter.stringify(time)}"
+        return Component.text(TimeConverter.stringify(time), NamedTextColor.WHITE)
     }
 
     companion object {

@@ -6,7 +6,8 @@ import de.hglabor.plugins.kitapi.cooldown.applyCooldown
 import de.hglabor.plugins.kitapi.kit.Kit
 import net.axay.kspigot.extensions.events.isRightClick
 import net.axay.kspigot.extensions.geometry.add
-import org.bukkit.Color
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -21,7 +22,7 @@ class BlinkProperties : MultipleUsesCooldownProperties(4, 16) {
 
 val Blink by Kit("Blink", ::BlinkProperties) {
     displayMaterial = Material.NETHER_STAR
-    description = "${Color.WHITE}Right click ${Color.GRAY}your kit-item to teleport in the direction you are looking"
+    description = Component.text("Right click ", NamedTextColor.WHITE).append(Component.text("your kit-item to teleport in the direction you are looking", NamedTextColor.GRAY)).content()
 
     fun Location.isSafe(): Boolean {
         val feet: Block = block
@@ -45,7 +46,7 @@ val Blink by Kit("Blink", ::BlinkProperties) {
                 player.playSound(player.location, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 100f, 100f)
                 player.location.subtract(0.0, 1.0, 0.0).block.setType(Material.OAK_LEAVES, false)
             } else {
-                player.sendMessage("${Prefix}This location is ${Color.RED}not safe${Color.GRAY}. You would have suffocated.")
+                player.sendMessage(Prefix.append(Component.text("This location is ", NamedTextColor.RED)).append(Component.text("not safe", NamedTextColor.RED)).append(Component.text(". You would have suffocated.", NamedTextColor.GRAY)))
                 cancelCooldown()
             }
         }
